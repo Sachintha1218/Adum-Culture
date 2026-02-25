@@ -1,0 +1,73 @@
+import { Product } from "@/types";
+
+export const products: Product[] = [
+    {
+        id: "1",
+        name: "Silk Evening Gown",
+        slug: "silk-evening-gown",
+        description: "A luxurious silk evening gown perfect for special occasions. Features a flattering silhouette and elegant details.",
+        price: 12500,
+        originalPrice: 15000,
+        category: "dresses",
+        images: ["https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=2000&auto=format&fit=crop", "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=2000&auto=format&fit=crop"],
+        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
+        colors: ["Black", "Red", "Navy"],
+        newArrival: true,
+        bestSeller: true,
+        itemCode: "SEG-2026-BLK",
+        stock: 12,
+        modelDetails: "Model is 5'9\" (175cm) and wearing a size S (UK6).",
+        material: "100% Mulberry Silk.",
+        careInstructions: "Dry clean only. Do not bleach. Cool iron on reverse."
+    },
+    {
+        id: "2",
+        name: "Oversized Linen Shirt",
+        slug: "oversized-linen-shirt",
+        description: "A comfortable and stylish oversized linen shirt. perfect for a casual chic look.",
+        price: 4500,
+        category: "tops",
+        images: ["https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=2000&auto=format&fit=crop", "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=2000&auto=format&fit=crop"],
+        sizes: ["XXS", "XS", "S", "M", "L"],
+        colors: ["White", "Beige"],
+        newArrival: true,
+        itemCode: "OLS-SS26-WHT",
+        stock: 35,
+        modelDetails: "Model is 5'7\" (170cm) and wearing a size M (UK8) for an oversized fit.",
+        material: "100% Organic Linen.",
+        careInstructions: "Machine wash cold. Line dry. Warm iron if needed."
+    },
+    {
+        id: "3",
+        name: "Tailored Trousers",
+        slug: "tailored-trousers",
+        description: "High-waisted tailored trousers made from premium fabric. Ideal for work or sophisticated outings.",
+        price: 6800,
+        category: "bottoms",
+        images: ["https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=2000&auto=format&fit=crop"],
+        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
+        colors: ["Black", "Grey"],
+        bestSeller: true,
+        itemCode: "TTR-AW25-BLK",
+        stock: 8,
+        modelDetails: "Model is 5'10\" (178cm) and wearing a size S (UK6).",
+        material: "70% Wool, 30% Polyester blend.",
+        careInstructions: "Dry clean recommended. Do not tumble dry."
+    },
+    {
+        id: "4",
+        name: "Floral Summer Dress",
+        slug: "floral-summer-dress",
+        description: "Lightweight floral dress for sunny days. Breathable and gentle on the skin.",
+        price: 5200,
+        category: "dresses",
+        images: ["https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=2000&auto=format&fit=crop"],
+        sizes: ["XS", "S", "M", "L", "XL", "XXL"],
+        colors: ["Floral Print"],
+        itemCode: "FSD-SU26-FLR",
+        stock: 22,
+        modelDetails: "Model is 5'8\" (173cm) and wearing a size S (UK6).",
+        material: "100% Viscose.",
+        careInstructions: "Hand wash cold. Do not wring. Dry flat in shade."
+    }
+];
