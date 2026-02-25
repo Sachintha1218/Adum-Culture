@@ -13,25 +13,12 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
 
     return (
         <div className="flex flex-col gap-4">
-            {/* Mobile: Horizontal Scroll (Carousel) */}
-            <div className="flex w-full overflow-x-auto gap-4 snap-x md:hidden">
-                {images.map((image, index) => (
-                    <div key={index} className="relative aspect-[3/4] w-[80vw] flex-shrink-0 snap-center overflow-hidden rounded-md bg-gray-100">
-                        <Image
-                            src={image}
-                            alt={`Product image ${index + 1}`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 80vw, 50vw"
-                        />
-                    </div>
-                ))}
-            </div>
+            {/* Mobile Carousel Removed to use desktop layout */}
 
-            {/* Desktop: Thumbnails on Left, Main Image on Right */}
-            <div className="hidden md:flex md:flex-row md:gap-4 lg:gap-8 md:h-[600px] lg:h-[700px]">
+            {/* Adaptive Gallery Layout: Thumbnails on Left, Main Image on Right */}
+            <div className="flex flex-row gap-2 md:gap-4 lg:gap-8 h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]">
                 {/* Thumbnails Column - Creative Vertical Line Layout */}
-                <div className="relative flex flex-col w-20 lg:w-24 flex-shrink-0">
+                <div className="relative flex flex-col w-16 md:w-20 lg:w-24 flex-shrink-0">
                     {/* The elegant connecting line */}
                     <div className="absolute left-[8px] top-4 bottom-4 w-px bg-primary/20 z-0" />
 

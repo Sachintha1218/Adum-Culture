@@ -43,7 +43,7 @@ export default function ProductPage({ params }: ProductPageProps) {
             {relatedProducts.length > 0 && (
                 <div className="mt-24 border-t pt-16">
                     <h2 className="mb-12 text-center text-3xl font-bold uppercase tracking-widest md:text-4xl">Complete the Look</h2>
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                         {relatedProducts.map((related) => (
                             <ProductCard key={related.id} product={related} />
                         ))}

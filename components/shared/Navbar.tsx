@@ -81,76 +81,27 @@ const Navbar = () => {
             <Container>
                 <div className="flex h-16 items-center justify-between">
 
-                    {/* Mobile Menu */}
-                    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                        <SheetTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className={cn("md:hidden", isHome && !scrolled ? "text-white hover:text-white/80 hover:bg-white/10" : "")}
-                            >
-                                <Menu className="h-6 w-6" />
-                                <span className="sr-only">Toggle menu</span>
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="left" className="flex flex-col gap-6 pt-10">
-                            <Link href="/" className="text-2xl font-bold uppercase tracking-widest" onClick={() => setIsOpen(false)}>
-                                Adum Culture
-                            </Link>
-                            <nav className="flex flex-col gap-4">
-                                {routes.map((route) => (
-                                    <div key={route.href} className="flex flex-col gap-2">
-                                        <div className="flex items-center justify-between">
-                                            <Link
-                                                href={route.href}
-                                                className={cn(
-                                                    "text-lg font-medium transition-colors hover:text-primary",
-                                                    pathname === route.href ? "text-primary" : "text-muted-foreground"
-                                                )}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                {route.label}
-                                            </Link>
-                                        </div>
-                                        {route.subItems && (
-                                            <div className="flex flex-col gap-3 pl-4 border-l ml-2 mt-1">
-                                                {route.subItems.map(sub => (
-                                                    <Link
-                                                        key={sub.label}
-                                                        href={sub.href}
-                                                        className="text-sm font-medium text-muted-foreground hover:text-primary uppercase tracking-wider"
-                                                        onClick={() => setIsOpen(false)}
-                                                    >
-                                                        {sub.label}
-                                                    </Link>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </nav>
-                        </SheetContent>
-                    </Sheet>
+                    {/* Mobile Menu Removed */}
 
                     {/* Logo */}
                     <Link
                         href="/"
                         className={cn(
-                            "text-xl font-bold uppercase tracking-widest md:text-2xl transition-colors",
+                            "text-base font-bold uppercase tracking-widest md:text-2xl transition-colors whitespace-nowrap",
                             isHome && !scrolled ? "text-white" : "text-foreground"
                         )}
                     >
                         Adum Culture
                     </Link>
 
-                    {/* Desktop Navigation */}
-                    <nav className="hidden gap-8 md:flex">
+                    {/* Desktop Navigation adapted for mobile */}
+                    <nav className="flex gap-2 md:gap-8 overflow-x-auto no-scrollbar items-center">
                         {routes.map((route) => (
-                            <div key={route.href} className="relative group flex items-center h-16">
+                            <div key={route.href} className="relative group flex items-center h-16 shrink-0">
                                 <Link
                                     href={route.href}
                                     className={cn(
-                                        "text-sm font-medium uppercase tracking-widest transition-colors hover:text-primary/80 flex items-center gap-1 h-full",
+                                        "text-[10px] md:text-sm font-medium uppercase tracking-widest transition-colors hover:text-primary/80 flex items-center gap-0.5 md:gap-1 h-full px-1 md:px-0",
                                         isHome && !scrolled
                                             ? "text-white/90 hover:text-white"
                                             : pathname === route.href || (route.href !== '/' && pathname.startsWith(route.href))
@@ -182,13 +133,13 @@ const Navbar = () => {
                     </nav>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 md:gap-2 shrink-0">
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className={cn("hidden sm:flex", isHome && !scrolled ? "text-white hover:text-white/80 hover:bg-white/10" : "")}
+                                    className={cn("flex", isHome && !scrolled ? "text-white hover:text-white/80 hover:bg-white/10" : "")}
                                     aria-label="Search"
                                 >
                                     <Search className="h-5 w-5" />

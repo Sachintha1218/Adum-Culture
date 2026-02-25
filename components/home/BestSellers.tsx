@@ -14,25 +14,19 @@ const BestSellers = () => {
     return (
         <section className="bg-secondary/30 py-16 md:py-24">
             <Container>
-                <div className="mb-12 flex items-end justify-between">
-                    <h2 className="text-3xl font-bold uppercase tracking-widest md:text-4xl">
+                <div className="mb-6 md:mb-12 flex items-end justify-between">
+                    <h2 className="text-xl font-bold uppercase tracking-widest md:text-4xl">
                         Best Sellers
                     </h2>
-                    <Button variant="link" className="hidden text-base text-primary md:inline-flex" asChild>
+                    <Button variant="link" className="text-xs md:text-base text-primary inline-flex px-0" asChild>
                         <Link href="/shop?category=best-sellers">View All</Link>
                     </Button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-x-6 md:gap-y-10">
                     {displayProducts.map((product) => (
                         <ProductCard key={product.id} product={product} />
                     ))}
-                </div>
-
-                <div className="mt-10 flex justify-center md:hidden">
-                    <Button variant="outline" size="lg" asChild>
-                        <Link href="/shop?category=best-sellers">View All Best Sellers</Link>
-                    </Button>
                 </div>
             </Container>
         </section>

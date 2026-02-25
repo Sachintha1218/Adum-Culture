@@ -87,39 +87,25 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="md:hidden">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-10 gap-2">
-                                    <Filter className="h-4 w-4" />
-                                    Filters
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="left">
-                                <div className="mt-6">
-                                    <FilterSidebar />
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
+                    {/* Mobile filter button removed, now side-nav shows everywhere */}
                     <Suspense fallback={<div>Loading sort...</div>}>
                         <SortSelect />
                     </Suspense>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-4 lg:grid-cols-5">
-                {/* Sidebar - Desktop */}
-                <aside className="hidden md:block md:col-span-1">
+            <div className="flex flex-row gap-4 md:grid md:grid-cols-4 lg:grid-cols-5 md:gap-8">
+                {/* Sidebar - Now visible on all screens */}
+                <aside className="w-1/3 md:w-auto md:col-span-1 shrink-0">
                     <Suspense fallback={<div>Loading filters...</div>}>
                         <FilterSidebar />
                     </Suspense>
                 </aside>
 
                 {/* Product Grid */}
-                <div className="md:col-span-3 lg:col-span-4">
+                <div className="w-2/3 md:w-auto md:col-span-3 lg:col-span-4 flex-grow">
                     {filteredProducts.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {filteredProducts.map((product) => (
                                 <ProductCard key={product.id} product={product} />
                             ))}
