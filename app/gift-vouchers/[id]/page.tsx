@@ -75,7 +75,7 @@ export default function VoucherBuyingPage({ params }: { params: { id: string } }
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
                     {/* Left Column - Visuals */}
-                    <div className="space-y-8 h-full sticky top-28">
+                    <div className="space-y-8 h-full lg:sticky lg:top-28">
                         {/* Image Preview */}
                         <div className={`relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border ${voucher.color}`}>
                             <div className="absolute inset-0 bg-black/10 z-10" />
@@ -88,20 +88,20 @@ export default function VoucherBuyingPage({ params }: { params: { id: string } }
                                 sizes="(max-width: 1024px) 100vw, 50vw"
                             />
                             {/* Overlay Text inside Voucher */}
-                            <div className={`absolute inset-0 z-20 flex flex-col justify-between p-8 md:p-12 ${voucher.textColor}`}>
+                            <div className={`absolute inset-0 z-20 flex flex-col justify-between p-6 md:p-12 ${voucher.textColor}`}>
                                 <div className="flex justify-between items-start">
-                                    <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                                        <Gift className="w-5 h-5" />
+                                    <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/20">
+                                        <Gift className="w-4 h-4 md:w-5 md:h-5" />
                                     </div>
-                                    <h2 className="text-3xl font-bold uppercase tracking-widest drop-shadow-lg font-serif">
+                                    <h2 className="text-xl md:text-3xl font-bold uppercase tracking-widest drop-shadow-lg font-serif">
                                         Adum Culture
                                     </h2>
                                 </div>
                                 <div>
-                                    <h3 className="text-4xl md:text-5xl font-serif tracking-widest drop-shadow-xl font-bold mb-2">
+                                    <h3 className="text-2xl md:text-5xl font-serif tracking-widest drop-shadow-xl font-bold mb-1 md:mb-2">
                                         {voucher.title}
                                     </h3>
-                                    <p className="text-xl md:text-2xl font-light opacity-90 drop-shadow-md">
+                                    <p className="text-base md:text-2xl font-light opacity-90 drop-shadow-md">
                                         Value: Rs. {selectedAmount.toLocaleString()}
                                     </p>
                                 </div>
@@ -139,12 +139,12 @@ export default function VoucherBuyingPage({ params }: { params: { id: string } }
                             <Label className="text-sm uppercase tracking-wider font-semibold text-muted-foreground">
                                 Select Amount (LKR)
                             </Label>
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                 {amounts.map((amount) => (
                                     <button
                                         key={amount}
                                         onClick={() => setSelectedAmount(amount)}
-                                        className={`py-4 rounded-xl border-2 transition-all duration-300 font-medium tracking-wider ${selectedAmount === amount
+                                        className={`py-4 rounded-xl border-2 transition-all duration-300 font-medium tracking-wider text-sm md:text-base ${selectedAmount === amount
                                             ? "border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
                                             : "border-border hover:border-primary/50 hover:bg-muted"
                                             }`}

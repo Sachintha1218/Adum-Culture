@@ -58,9 +58,9 @@ export default function GiftVouchersPage() {
                             </div>
 
                             {/* Content Section */}
-                            <div className={`flex flex-col justify-between p-8 md:w-3/5 z-20 ${voucher.textColor}`}>
+                            <div className={`flex flex-col justify-between p-6 sm:p-8 md:w-3/5 z-20 ${voucher.textColor}`}>
                                 <div className="space-y-4">
-                                    <h3 className="text-2xl font-semibold font-serif tracking-wide">
+                                    <h3 className="text-xl sm:text-2xl font-semibold font-serif tracking-wide">
                                         {voucher.title}
                                     </h3>
                                     <p className="text-sm opacity-90 leading-relaxed font-light">
@@ -68,7 +68,7 @@ export default function GiftVouchersPage() {
                                     </p>
                                 </div>
 
-                                <div className="mt-8">
+                                <div className="mt-6 sm:mt-8">
                                     <Button
                                         asChild
                                         variant="outline"
@@ -79,9 +79,10 @@ export default function GiftVouchersPage() {
                                             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                                         </Link>
                                     </Button>
-                                    <div className="mt-4 flex items-center gap-2 opacity-60 text-xs font-mono uppercase tracking-widest">
+                                    <div className="mt-4 flex flex-wrap items-center gap-1.5 sm:gap-2 opacity-60 text-[10px] sm:text-xs font-mono uppercase tracking-widest leading-tight">
                                         <span>Digital Delivery</span>
-                                        <span className="w-1 h-1 rounded-full bg-current" />
+                                        <span className="w-1 h-1 rounded-full bg-current hidden sm:inline-block" />
+                                        <span className="sm:hidden block w-full"></span>
                                         <span>No Expiry</span>
                                     </div>
                                 </div>

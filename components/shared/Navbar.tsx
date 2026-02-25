@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Menu, Search, User, ChevronDown } from "lucide-react";
+import { ShoppingBag, Menu, Search, User, ChevronDown, ChevronRight } from "lucide-react";
 
 import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,55 @@ const routes = [
     { href: "/contact", label: "Contact" },
 ];
 
+const MobileNavItem = ({ route, pathname, setIsOpen }: { route: any; pathname: string; setIsOpen: (val: boolean) => void }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const hasSubItems = !!route.subItems;
+
+    return (
+        <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+                <Link
+                    href={route.href}
+                    className={cn(
+                        "text-lg font-medium transition-colors hover:text-primary",
+                        pathname === route.href ? "text-primary" : "text-muted-foreground"
+                    )}
+                    onClick={() => {
+                        if (!hasSubItems) setIsOpen(false);
+                    }}
+                >
+                    {route.label}
+                </Link>
+                {hasSubItems && (
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="p-2 text-muted-foreground hover:text-foreground"
+                    >
+                        {isExpanded ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                    </button>
+                )}
+            </div>
+            {hasSubItems && isExpanded && (
+                <div className="flex flex-col gap-3 pl-4 border-l-2 border-primary/20 ml-2 mt-1 py-1">
+                    {route.subItems.map((sub: any) => (
+                        <Link
+                            key={sub.label}
+                            href={sub.href}
+                            className={cn(
+                                "text-sm font-medium hover:text-primary uppercase tracking-wider",
+                                pathname === sub.href ? "text-primary" : "text-muted-foreground"
+                            )}
+                            onClick={() => setIsOpen(false)}
+                        >
+                            {sub.label}
+                        </Link>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Navbar = () => {
     const pathname = usePathname();
     const { cartCount, openCart } = useCart();
@@ -81,7 +130,31 @@ const Navbar = () => {
             <Container>
                 <div className="flex h-16 items-center justify-between">
 
-                    {/* Mobile Menu Removed */}
+                    {/* Mobile Menu */}
+                    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={cn("md:hidden", isHome && !scrolled ? "text-white hover:text-white/80 hover:bg-white/10" : "")}
+                            >
+                                <Menu className="h-6 w-6" />
+                                <span className="sr-only">Toggle menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="flex flex-col gap-6 pt-10 overflow-hidden w-[300px] sm:w-[400px]">
+                            <Link href="/" className="text-2xl font-bold uppercase tracking-widest shrink-0" onClick={() => setIsOpen(false)}>
+                                Adum Culture
+                            </Link>
+                            <div className="flex-1 overflow-y-auto pb-8 no-scrollbar">
+                                <nav className="flex flex-col gap-6">
+                                    {routes.map((route) => (
+                                        <MobileNavItem key={route.href} route={route} pathname={pathname} setIsOpen={setIsOpen} />
+                                    ))}
+                                </nav>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
 
                     {/* Logo */}
                     <Link
@@ -94,14 +167,14 @@ const Navbar = () => {
                         Adum Culture
                     </Link>
 
-                    {/* Desktop Navigation adapted for mobile */}
-                    <nav className="flex gap-2 md:gap-8 overflow-x-auto no-scrollbar items-center">
+                    {/* Desktop Navigation */}
+                    <nav className="hidden gap-8 md:flex">
                         {routes.map((route) => (
-                            <div key={route.href} className="relative group flex items-center h-16 shrink-0">
+                            <div key={route.href} className="relative group flex items-center h-16">
                                 <Link
                                     href={route.href}
                                     className={cn(
-                                        "text-[10px] md:text-sm font-medium uppercase tracking-widest transition-colors hover:text-primary/80 flex items-center gap-0.5 md:gap-1 h-full px-1 md:px-0",
+                                        "text-sm font-medium uppercase tracking-widest transition-colors hover:text-primary/80 flex items-center gap-1 h-full",
                                         isHome && !scrolled
                                             ? "text-white/90 hover:text-white"
                                             : pathname === route.href || (route.href !== '/' && pathname.startsWith(route.href))
@@ -133,13 +206,13 @@ const Navbar = () => {
                     </nav>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-1 md:gap-2 shrink-0">
+                    <div className="flex items-center gap-2">
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className={cn("flex", isHome && !scrolled ? "text-white hover:text-white/80 hover:bg-white/10" : "")}
+                                    className={cn("hidden sm:flex", isHome && !scrolled ? "text-white hover:text-white/80 hover:bg-white/10" : "")}
                                     aria-label="Search"
                                 >
                                     <Search className="h-5 w-5" />

@@ -123,8 +123,8 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
             {/* Quantity & Add to Cart */}
             <div className="flex flex-col gap-4">
-                <div className="flex gap-4">
-                    <div className="flex items-center rounded-full border px-2">
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex justify-between sm:justify-center items-center rounded-full border px-2 shrink-0 h-12">
                         <Button
                             variant="ghost"
                             size="icon"
@@ -146,9 +146,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                             <Plus className="h-4 w-4" />
                         </Button>
                     </div>
-                    <div className="flex flex-1 gap-2">
+                    <div className="flex flex-col sm:flex-row flex-1 gap-2">
                         <Button
-                            className="flex-1 uppercase tracking-widest h-12 rounded-full text-sm"
+                            className="flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
                             size="lg"
                             variant="outline"
                             onClick={handleAddToCart}
@@ -158,7 +158,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                             {!isAdding && <ShoppingBag className="ml-2 h-4 w-4" />}
                         </Button>
                         <Button
-                            className="flex-1 uppercase tracking-widest h-12 rounded-full text-sm"
+                            className="flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
                             size="lg"
                             onClick={handleBuyNow}
                         >
