@@ -45,7 +45,7 @@ const routes = [
     { href: "/contact", label: "Contact" },
 ];
 
-const MobileNavItem = ({ route, pathname, setIsOpen }: { route: any; pathname: string; setIsOpen: (val: boolean) => void }) => {
+const MobileNavItem = ({ route, pathname, setIsOpen }: { route: { href: string; label: string; subItems?: { href: string; label: string; }[] }; pathname: string; setIsOpen: (val: boolean) => void }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const hasSubItems = !!route.subItems;
 
@@ -56,10 +56,17 @@ const MobileNavItem = ({ route, pathname, setIsOpen }: { route: any; pathname: s
                     href={route.href}
                     className={cn(
                         "text-lg font-medium transition-colors hover:text-primary",
-                        pathname === route.href ? "text-primary" : "text-muted-foreground"
+                        pathname === route.href || (route.href !== '/' && pathname.startsWith(route.href))
+                            ? "text-primary"
+                            : "text-muted-foreground"
                     )}
-                    onClick={() => {
-                        if (!hasSubItems) setIsOpen(false);
+                    onClick={(e) => {
+                        if (hasSubItems) {
+                            e.preventDefault();
+                            setIsExpanded(!isExpanded);
+                        } else {
+                            setIsOpen(false);
+                        }
                     }}
                 >
                     {route.label}
@@ -67,27 +74,37 @@ const MobileNavItem = ({ route, pathname, setIsOpen }: { route: any; pathname: s
                 {hasSubItems && (
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-2 text-muted-foreground hover:text-foreground"
+                        className="p-2 text-muted-foreground hover:text-foreground transition-transform"
+                        aria-expanded={isExpanded}
                     >
-                        {isExpanded ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                        <ChevronRight className={cn("h-5 w-5 transition-transform duration-300", isExpanded && "rotate-90")} />
                     </button>
                 )}
             </div>
-            {hasSubItems && isExpanded && (
-                <div className="flex flex-col gap-3 pl-4 border-l-2 border-primary/20 ml-2 mt-1 py-1">
-                    {route.subItems.map((sub: any) => (
-                        <Link
-                            key={sub.label}
-                            href={sub.href}
-                            className={cn(
-                                "text-sm font-medium hover:text-primary uppercase tracking-wider",
-                                pathname === sub.href ? "text-primary" : "text-muted-foreground"
-                            )}
-                            onClick={() => setIsOpen(false)}
-                        >
-                            {sub.label}
-                        </Link>
-                    ))}
+            {hasSubItems && (
+                <div
+                    className={cn(
+                        "grid transition-all duration-300 ease-in-out",
+                        isExpanded ? "grid-rows-[1fr] opacity-100 mt-1" : "grid-rows-[0fr] opacity-0 mt-0"
+                    )}
+                >
+                    <div className="overflow-hidden">
+                        <div className="flex flex-col gap-3 pl-4 border-l-2 border-primary/20 ml-2 py-1">
+                            {route.subItems?.map((sub: { href: string; label: string; }) => (
+                                <Link
+                                    key={sub.label}
+                                    href={sub.href}
+                                    className={cn(
+                                        "text-sm font-medium hover:text-primary uppercase tracking-wider block py-1",
+                                        pathname === sub.href ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    {sub.label}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

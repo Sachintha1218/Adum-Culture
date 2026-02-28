@@ -104,7 +104,7 @@ export default function PaymentPage() {
     };
 
     return (
-        <Container className="py-12 md:py-20">
+        <Container className="pt-24 pb-12 md:pt-28 md:py-20">
             <h1 className="mb-12 text-3xl font-bold uppercase tracking-widest md:text-4xl text-center">Payment</h1>
 
             <div className="grid gap-12 lg:grid-cols-12 max-w-5xl mx-auto">

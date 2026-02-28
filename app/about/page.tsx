@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function AboutPage() {
     return (
-        <Container className="py-12 md:py-20">
+        <Container className="pt-24 pb-12 md:pt-28 md:py-20">
             <div className="mx-auto max-w-4xl text-center">
                 <h1 className="mb-6 text-4xl font-bold uppercase tracking-widest md:text-5xl">About Adum Culture</h1>
                 <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">

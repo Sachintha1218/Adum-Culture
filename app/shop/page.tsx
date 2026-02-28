@@ -5,9 +5,6 @@ import ProductCard from "@/components/shared/ProductCard";
 import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { SortSelect } from "@/components/shop/SortSelect";
 import { products } from "@/data/products";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
 
 // For server components to receive searchParams, type needs to be defined
 interface ShopPageProps {
