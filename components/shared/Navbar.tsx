@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Menu, Search, User, ChevronDown, ChevronRight } from "lucide-react";
+import { ShoppingBag, Menu, Search, User, ChevronDown } from "lucide-react";
 
 import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
@@ -45,25 +45,36 @@ const routes = [
     { href: "/contact", label: "Contact" },
 ];
 
-const MobileNavItem = ({ route, pathname, setIsOpen }: { route: { href: string; label: string; subItems?: { href: string; label: string; }[] }; pathname: string; setIsOpen: (val: boolean) => void }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+const MobileNavItem = ({
+    route,
+    pathname,
+    setIsOpen,
+    isExpanded,
+    toggleExpand
+}: {
+    route: { href: string; label: string; subItems?: { href: string; label: string; }[] };
+    pathname: string;
+    setIsOpen: (val: boolean) => void;
+    isExpanded: boolean;
+    toggleExpand: () => void;
+}) => {
     const hasSubItems = !!route.subItems;
 
     return (
-        <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+            <div className="flex items-center justify-between min-h-[48px]">
                 <Link
                     href={route.href}
                     className={cn(
-                        "text-lg font-medium transition-colors hover:text-primary",
+                        "text-lg font-medium transition-colors hover:text-[#5c5c5c]",
                         pathname === route.href || (route.href !== '/' && pathname.startsWith(route.href))
-                            ? "text-primary"
-                            : "text-muted-foreground"
+                            ? "text-[#1A1A1A]"
+                            : "text-[#1A1A1A]/70"
                     )}
                     onClick={(e) => {
                         if (hasSubItems) {
                             e.preventDefault();
-                            setIsExpanded(!isExpanded);
+                            toggleExpand();
                         } else {
                             setIsOpen(false);
                         }
@@ -73,11 +84,11 @@ const MobileNavItem = ({ route, pathname, setIsOpen }: { route: { href: string; 
                 </Link>
                 {hasSubItems && (
                     <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-2 text-muted-foreground hover:text-foreground transition-transform"
+                        onClick={toggleExpand}
+                        className="p-2 text-[#1A1A1A]/70 hover:text-[#1A1A1A] transition-transform min-h-[48px] min-w-[48px] flex items-center justify-center"
                         aria-expanded={isExpanded}
                     >
-                        <ChevronRight className={cn("h-5 w-5 transition-transform duration-300", isExpanded && "rotate-90")} />
+                        <ChevronDown className={cn("h-5 w-5 transition-transform duration-300", isExpanded && "rotate-180")} />
                     </button>
                 )}
             </div>
@@ -85,18 +96,18 @@ const MobileNavItem = ({ route, pathname, setIsOpen }: { route: { href: string; 
                 <div
                     className={cn(
                         "grid transition-all duration-300 ease-in-out",
-                        isExpanded ? "grid-rows-[1fr] opacity-100 mt-1" : "grid-rows-[0fr] opacity-0 mt-0"
+                        isExpanded ? "grid-rows-[1fr] opacity-100 mt-2 mb-4" : "grid-rows-[0fr] opacity-0 mt-0 mb-0"
                     )}
                 >
                     <div className="overflow-hidden">
-                        <div className="flex flex-col gap-3 pl-4 border-l-2 border-primary/20 ml-2 py-1">
+                        <div className="flex flex-col gap-4 pl-4 border-l-[1px] border-[#1A1A1A]/10 ml-2 py-2">
                             {route.subItems?.map((sub: { href: string; label: string; }) => (
                                 <Link
                                     key={sub.label}
                                     href={sub.href}
                                     className={cn(
-                                        "text-sm font-medium hover:text-primary uppercase tracking-wider block py-1",
-                                        pathname === sub.href ? "text-primary" : "text-muted-foreground"
+                                        "text-[15px] font-normal hover:text-[#1A1A1A] transition-colors block py-1",
+                                        pathname === sub.href ? "text-[#1A1A1A] font-medium" : "text-[#1A1A1A]/60"
                                     )}
                                     onClick={() => setIsOpen(false)}
                                 >
@@ -116,6 +127,7 @@ const Navbar = () => {
     const { cartCount, openCart } = useCart();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
     // Handle scroll effect
     useEffect(() => {
@@ -159,14 +171,29 @@ const Navbar = () => {
                                 <span className="sr-only">Toggle menu</span>
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="left" className="flex flex-col gap-6 pt-10 overflow-hidden w-[300px] sm:w-[400px]">
-                            <Link href="/" className="text-2xl font-bold uppercase tracking-widest shrink-0" onClick={() => setIsOpen(false)}>
-                                Adum Culture
-                            </Link>
-                            <div className="flex-1 overflow-y-auto pb-8 no-scrollbar">
-                                <nav className="flex flex-col gap-6">
+                        <SheetContent
+                            side="left"
+                            className="flex flex-col p-0 overflow-hidden w-[85%] sm:max-w-md bg-[#F7F6F4] border-r-0 shadow-2xl"
+                        >
+                            {/* Premium Header */}
+                            <div className="flex h-[72px] shrink-0 items-center justify-between px-6 border-b border-[#1A1A1A]/5 shadow-[0_1px_2px_rgba(0,0,0,0.01)] sticky top-0 bg-[#F7F6F4] z-10 w-full">
+                                <Link href="/" className="text-xl font-bold uppercase tracking-[0.2em] text-[#1A1A1A]" onClick={() => setIsOpen(false)}>
+                                    Adum Culture
+                                </Link>
+                                {/* Close button is handled by SheetPrimitive.Close in sheet.tsx, but we can style it there. Or we just leave the default one. The default SheetContent has the X top-right. Let's make sure it doesn't overlap. Actually, we can remove the default one and build ours if needed, but given we don't want to modify sheet.tsx intensely right now, we will rely on default. */}
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto px-6 py-8 no-scrollbar touch-pan-y">
+                                <nav className="flex flex-col gap-5">
                                     {routes.map((route) => (
-                                        <MobileNavItem key={route.href} route={route} pathname={pathname} setIsOpen={setIsOpen} />
+                                        <MobileNavItem
+                                            key={route.href}
+                                            route={route}
+                                            pathname={pathname}
+                                            setIsOpen={setIsOpen}
+                                            isExpanded={expandedItem === route.label}
+                                            toggleExpand={() => setExpandedItem(expandedItem === route.label ? null : route.label)}
+                                        />
                                     ))}
                                 </nav>
                             </div>
