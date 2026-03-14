@@ -11,7 +11,7 @@ export const vouchers = [
         id: "birthday",
         title: "Birthdays",
         description: "Celebrate their special day with a luxurious shopping experience.",
-        image: "https://images.unsplash.com/photo-1530103862676-de8892b12a15?q=80&w=2670&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=2670&auto=format&fit=crop",
         color: "bg-rose-950 border-rose-900",
         textColor: "text-rose-100",
     },

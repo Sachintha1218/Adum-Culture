@@ -1,10 +1,13 @@
 import { Suspense } from "react";
 import Fuse from "fuse.js";
+import { Filter } from "lucide-react";
 import Container from "@/components/shared/Container";
 import ProductCard from "@/components/shared/ProductCard";
 import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { SortSelect } from "@/components/shop/SortSelect";
 import { products } from "@/data/products";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 // For server components to receive searchParams, type needs to be defined
 interface ShopPageProps {
@@ -84,23 +87,37 @@ export default function ShopPage({ searchParams }: ShopPageProps) {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {/* Mobile filter button removed, now side-nav shows everywhere */}
+                    <div className="md:hidden">
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="outline" className="flex items-center gap-2">
+                                    <Filter className="h-4 w-4" />
+                                    Filters
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="left" className="w-[85%] sm:max-w-md overflow-y-auto h-full pt-16">
+                                <Suspense fallback={<div>Loading filters...</div>}>
+                                    <FilterSidebar />
+                                </Suspense>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                     <Suspense fallback={<div>Loading sort...</div>}>
                         <SortSelect />
                     </Suspense>
                 </div>
             </div>
 
-            <div className="flex flex-row gap-4 md:grid md:grid-cols-4 lg:grid-cols-5 md:gap-8">
-                {/* Sidebar - Now visible on all screens */}
-                <aside className="w-1/3 md:w-auto md:col-span-1 shrink-0">
+            <div className="flex flex-col gap-6 md:grid md:grid-cols-4 lg:grid-cols-5 md:gap-8">
+                {/* Sidebar - Hidden on mobile, visible on tablet+ */}
+                <aside className="hidden md:block md:w-auto md:col-span-1 shrink-0">
                     <Suspense fallback={<div>Loading filters...</div>}>
                         <FilterSidebar />
                     </Suspense>
                 </aside>
 
                 {/* Product Grid */}
-                <div className="w-2/3 md:w-auto md:col-span-3 lg:col-span-4 flex-grow">
+                <div className="w-full md:col-span-3 lg:col-span-4 flex-grow">
                     {filteredProducts.length > 0 ? (
                         <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             {filteredProducts.map((product) => (
