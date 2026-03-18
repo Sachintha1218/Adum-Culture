@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
@@ -9,8 +9,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
+const poppins = Poppins({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"], variable: "--font-heading" });
 
 export const metadata: Metadata = {
   title: "ADUM CULTURE | Premium Modern Clothing",
@@ -26,8 +26,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(
         "min-h-screen bg-background font-sans antialiased",
-        inter.variable,
-        playfair.variable
+        montserrat.variable,
+        poppins.variable
       )}>
         <AuthProvider>
           <CartProvider>

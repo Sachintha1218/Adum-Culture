@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, Search, User, ChevronDown } from "lucide-react";
 
@@ -177,8 +178,8 @@ const Navbar = () => {
                         >
                             {/* Premium Header */}
                             <div className="flex h-[72px] shrink-0 items-center justify-between px-6 border-b border-[#1A1A1A]/5 shadow-[0_1px_2px_rgba(0,0,0,0.01)] sticky top-0 bg-[#F7F6F4] z-10 w-full">
-                                <Link href="/" className="text-xl font-bold uppercase tracking-[0.2em] text-[#1A1A1A]" onClick={() => setIsOpen(false)}>
-                                    Adum Culture
+                                <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
+                                    <Image src="/logos/logo-nav.png" alt="Adum Culture" priority width={160} height={28} className="w-auto h-5 md:h-6 object-contain" />
                                 </Link>
                                 {/* Close button is handled by SheetPrimitive.Close in sheet.tsx, but we can style it there. Or we just leave the default one. The default SheetContent has the X top-right. Let's make sure it doesn't overlap. Actually, we can remove the default one and build ours if needed, but given we don't want to modify sheet.tsx intensely right now, we will rely on default. */}
                             </div>
@@ -201,14 +202,18 @@ const Navbar = () => {
                     </Sheet>
 
                     {/* Logo */}
-                    <Link
-                        href="/"
-                        className={cn(
-                            "text-base font-bold uppercase tracking-widest md:text-2xl transition-colors whitespace-nowrap",
-                            isHome && !scrolled ? "text-white" : "text-foreground"
-                        )}
-                    >
-                        Adum Culture
+                    <Link href="/" className="flex items-center">
+                        <Image
+                            src="/logos/logo-nav.png"
+                            alt="Adum Culture"
+                            width={180}
+                            height={34}
+                            priority
+                            className={cn(
+                                "w-auto h-6 md:h-7 lg:h-8 object-contain transition-all duration-300",
+                                isHome && !scrolled ? "brightness-0 invert filter" : ""
+                            )}
+                        />
                     </Link>
 
                     {/* Desktop Navigation */}

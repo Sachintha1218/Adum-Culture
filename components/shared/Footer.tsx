@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 
 import Container from "@/components/shared/Container";
@@ -12,8 +13,8 @@ const Footer = () => {
             <Container className="py-12 md:py-16">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
                     <div className="md:col-span-1">
-                        <Link href="/" className="text-xl font-bold uppercase tracking-widest">
-                            ADUM CULTURE
+                        <Link href="/" className="inline-block">
+                            <Image src="/logos/logo-full.png" alt="Adum Culture" width={200} height={100} className="w-auto h-16 object-contain" />
                         </Link>
                         <p className="mt-4 text-sm text-muted-foreground">
                             Premium modern clothing for the contemporary individual. Redefining luxury with every stitch.
