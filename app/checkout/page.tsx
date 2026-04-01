@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { coupons } from "@/data/coupons";
 import Container from "@/components/shared/Container";
+import { resolveImageUrl } from "@/lib/sanity-helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -151,7 +152,7 @@ export default function CheckoutPage() {
                                 <div key={`${item.id}-${item.selectedSize}`} className="flex gap-4">
                                     <div className="relative h-20 w-16 shrink-0 overflow-hidden bg-gray-100 rounded">
                                         <Image
-                                            src={item.images[0]}
+                                            src={resolveImageUrl(item.images[0], 200)}
                                             alt={item.name}
                                             fill
                                             className="object-cover"

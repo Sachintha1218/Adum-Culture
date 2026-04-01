@@ -12,6 +12,7 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet";
 import { formatCurrency } from "@/lib/utils";
+import { resolveImageUrl, resolveSlug } from "@/lib/sanity-helpers";
 
 export function CartSheet() {
     const {
@@ -51,12 +52,16 @@ export function CartSheet() {
                             </Button>
                         </div>
                     ) : (
-                        cartItems.map((item) => (
-                            <div key={`${item.id}-${item.selectedSize}`} className="flex gap-4 border-b pb-6 last:border-0 last:pb-0">
+                        cartItems.map((item) => {
+                            const itemId = item._id ?? item.id ?? '';
+                            const itemSlug = resolveSlug(item.slug);
+                            const imgSrc = resolveImageUrl(item.images[0], 200);
+                            return (
+                            <div key={`${itemId}-${item.selectedSize}`} className="flex gap-4 border-b pb-6 last:border-0 last:pb-0">
                                 {/* Image */}
                                 <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-gray-100 rounded">
                                     <Image
-                                        src={item.images[0]}
+                                        src={imgSrc}
                                         alt={item.name}
                                         fill
                                         className="object-cover"
@@ -68,7 +73,7 @@ export function CartSheet() {
                                     <div className="flex justify-between items-start gap-2">
                                         <div>
                                             <h3 className="font-medium text-sm leading-tight uppercase tracking-wide">
-                                                <Link href={`/shop/${item.slug}`} onClick={closeCart}>
+                                                <Link href={`/shop/${itemSlug}`} onClick={closeCart}>
                                                     {item.name}
                                                 </Link>
                                             </h3>
@@ -80,7 +85,7 @@ export function CartSheet() {
                                     <div className="flex items-center justify-between mt-4">
                                         <div className="flex items-center rounded-full border px-1 h-7">
                                             <button
-                                                onClick={() => updateQuantity(item.id, item.selectedSize, item.quantity - 1)}
+                                                onClick={() => updateQuantity(itemId, item.selectedSize, item.quantity - 1)}
                                                 disabled={item.quantity <= 1}
                                                 className="p-1 hover:text-primary disabled:opacity-50"
                                             >
@@ -88,14 +93,14 @@ export function CartSheet() {
                                             </button>
                                             <span className="mx-2 text-xs w-4 text-center">{item.quantity}</span>
                                             <button
-                                                onClick={() => updateQuantity(item.id, item.selectedSize, item.quantity + 1)}
+                                                onClick={() => updateQuantity(itemId, item.selectedSize, item.quantity + 1)}
                                                 className="p-1 hover:text-primary"
                                             >
                                                 <Plus className="h-3 w-3" />
                                             </button>
                                         </div>
                                         <button
-                                            onClick={() => removeFromCart(item.id, item.selectedSize)}
+                                            onClick={() => removeFromCart(itemId, item.selectedSize)}
                                             className="text-xs text-muted-foreground underline hover:text-destructive"
                                         >
                                             Remove
@@ -103,7 +108,8 @@ export function CartSheet() {
                                     </div>
                                 </div>
                             </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
 
