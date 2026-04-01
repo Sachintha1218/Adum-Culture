@@ -1,9 +1,20 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import Container from "@/components/shared/Container";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
-import { products } from "@/data/products";
 import ProductCard from "@/components/shared/ProductCard";
+import { client } from "@/sanity/lib/client";
+import {
+    PRODUCT_BY_SLUG_QUERY,
+    ALL_PRODUCT_SLUGS_QUERY,
+    RELATED_PRODUCTS_QUERY,
+} from "@/sanity/lib/queries";
+import { products as fallbackProducts } from "@/data/products";
+import { Product } from "@/types";
+import { resolveSlug, resolveImageUrl } from "@/lib/sanity-helpers";
+
+export const revalidate = 60;
 
 interface ProductPageProps {
     params: {
@@ -11,23 +22,96 @@ interface ProductPageProps {
     };
 }
 
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+    let product: Product | null = null;
+
+    try {
+        product = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug: params.slug });
+    } catch {}
+
+    if (!product) {
+        const staticProduct = fallbackProducts.find((p) => resolveSlug(p.slug) === params.slug);
+        if (staticProduct) product = staticProduct as Product;
+    }
+
+    if (!product) return { title: "Product Not Found" };
+
+    const imageUrl = resolveImageUrl(product.images?.[0], 1200);
+    const description = product.description
+        ? product.description.slice(0, 160)
+        : `Shop ${product.name} at Adum Culture. Premium modern clothing.`;
+
+    return {
+        title: product.name,
+        description,
+        openGraph: {
+            title: `${product.name} | Adum Culture`,
+            description,
+            images: [{ url: imageUrl, alt: product.name }],
+            type: "website",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${product.name} | Adum Culture`,
+            description,
+            images: [imageUrl],
+        },
+    };
+}
+
 export async function generateStaticParams() {
-    return products.map((product) => ({
-        slug: product.slug,
+    try {
+        const slugs = await client.fetch(ALL_PRODUCT_SLUGS_QUERY);
+        if (slugs?.length > 0) {
+            return slugs.map((item: { slug: string }) => ({ slug: item.slug }));
+        }
+    } catch {
+        // Fall back to static data slugs
+    }
+    return fallbackProducts.map((product) => ({
+        slug: resolveSlug(product.slug),
     }));
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-    const product = products.find((p) => p.slug === params.slug);
+export default async function ProductPage({ params }: ProductPageProps) {
+    let product: Product | null = null;
+    let relatedProducts: Product[] = [];
+
+    try {
+        product = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug: params.slug });
+    } catch {
+        // Fall back to static data
+    }
+
+    // Fall back to static data if Sanity returns nothing
+    if (!product) {
+        const staticProduct = fallbackProducts.find(
+            (p) => resolveSlug(p.slug) === params.slug
+        );
+        if (staticProduct) {
+            product = staticProduct as Product;
+        }
+    }
 
     if (!product) {
         notFound();
     }
 
-    // Get related products (same category, excluding current)
-    const relatedProducts = products
-        .filter((p) => p.category === product.category && p.slug !== product.slug)
-        .slice(0, 4);
+    // Fetch related products
+    try {
+        relatedProducts = await client.fetch(RELATED_PRODUCTS_QUERY, {
+            category: product.category,
+            currentSlug: params.slug,
+        });
+    } catch {
+        relatedProducts = fallbackProducts
+            .filter(
+                (p) =>
+                    p.category === product!.category &&
+                    resolveSlug(p.slug) !== params.slug
+            )
+            .slice(0, 4) as Product[];
+    }
 
     return (
         <Container className="pt-24 md:pt-32 pb-10 md:pb-16">
@@ -42,10 +126,12 @@ export default function ProductPage({ params }: ProductPageProps) {
             {/* Related Products */}
             {relatedProducts.length > 0 && (
                 <div className="mt-24 border-t pt-16">
-                    <h2 className="mb-12 text-center text-3xl font-bold uppercase tracking-widest md:text-4xl">Complete the Look</h2>
+                    <h2 className="mb-12 text-center text-3xl font-bold uppercase tracking-widest md:text-4xl">
+                        Complete the Look
+                    </h2>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                         {relatedProducts.map((related) => (
-                            <ProductCard key={related.id} product={related} />
+                            <ProductCard key={related._id ?? related.id} product={related} />
                         ))}
                     </div>
                 </div>

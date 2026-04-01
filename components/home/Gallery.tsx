@@ -22,7 +22,7 @@ const galleryImages = [
         className: "col-span-1 md:col-span-1 row-span-1",
     },
     {
-        src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=2670&auto=format&fit=crop",
+        src: "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=2670&auto=format&fit=crop",
         alt: "Minimalist fashion aesthetic",
         className: "col-span-1 md:col-span-1 row-span-2",
     },
@@ -32,8 +32,13 @@ const galleryImages = [
         className: "col-span-1 md:col-span-2 row-span-1",
     },
     {
-        src: "https://images.unsplash.com/photo-1524041255072-7da0525d6b41?q=80&w=2787&auto=format&fit=crop",
+        src: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2787&auto=format&fit=crop",
         alt: "Urban street style fusion",
+        className: "col-span-1 md:col-span-1 row-span-1",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2670&auto=format&fit=crop",
+        alt: "Elegant evening fashion",
         className: "col-span-1 md:col-span-1 row-span-1",
     },
 ];
@@ -56,7 +61,7 @@ const Gallery = () => {
 
                 <div
                     ref={ref}
-                    className="grid grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[300px]"
+                    className="grid grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[300px] md:grid-flow-dense"
                 >
                     {galleryImages.map((image, index) => (
                         <motion.div

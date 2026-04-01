@@ -1,5 +1,12 @@
+import { Metadata } from "next";
 import Container from "@/components/shared/Container";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+    title: "About Us",
+    description:
+        "Discover the story behind Adum Culture — modern luxury fashion born in Sri Lanka, bridging streetwear ease with high-fashion elegance.",
+};
 
 export default function AboutPage() {
     return (

@@ -3,18 +3,20 @@
 import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { resolveImageUrl } from "@/lib/sanity-helpers";
+import { SanityImage } from "@/types";
 
 interface ProductGalleryProps {
-    images: string[];
+    images: (SanityImage | string)[];
 }
 
 const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
-    const [selectedImage, setSelectedImage] = useState(images[0] || "");
+    const resolvedImages = images.map((img) => resolveImageUrl(img, 1200));
+    const [selectedImage, setSelectedImage] = useState(resolvedImages[0] || "");
+
 
     return (
         <div className="flex flex-col gap-4">
-            {/* Mobile Carousel Removed to use desktop layout */}
-
             {/* Adaptive Gallery Layout: Stacked on Mobile, Thumbnails on Left on Desktop */}
             <div className="flex flex-col md:flex-row gap-4 lg:gap-8 h-auto md:h-[600px] lg:h-[700px]">
 
@@ -31,15 +33,15 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                     />
                 </div>
 
-                {/* Thumbnails Column/Row - Creative Vertical/Horizontal Line Layout */}
+                {/* Thumbnails Column/Row */}
                 <div className="relative flex flex-row md:flex-col w-full md:w-20 lg:w-24 flex-shrink-0 order-2 md:order-1">
                     {/* The elegant connecting line - Only on desktop */}
                     <div className="hidden md:block absolute left-[8px] top-4 bottom-4 w-px bg-primary/20 z-0" />
 
                     <div className="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-y-auto md:overflow-x-hidden h-24 md:h-full py-2 md:py-4 z-10 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                        {images.map((image, index) => (
+                        {resolvedImages.map((image, index) => (
                             <div key={index} className="relative flex items-center group flex-shrink-0">
-                                {/* Active Indicator Line - Vertical for Desktop, Horizontal for Mobile */}
+                                {/* Active Indicator Line */}
                                 <div
                                     className={cn(
                                         "absolute bg-primary transition-all duration-300 z-20",

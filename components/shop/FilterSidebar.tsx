@@ -5,13 +5,18 @@ import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { categories } from "@/data/categories";
+import { Category } from "@/types";
+import { resolveSlug, resolveId } from "@/lib/sanity-helpers";
 import { cn } from "@/lib/utils";
 
 const sizes = ["XS", "S", "M", "L", "XL"];
 const colors = ["Black", "White", "Navy", "Red", "Beige", "Floral Print"];
 
-export const FilterSidebar = () => {
+interface FilterSidebarProps {
+    categories: Category[];
+}
+
+export const FilterSidebar = ({ categories }: FilterSidebarProps) => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -84,19 +89,23 @@ export const FilterSidebar = () => {
                         All Categories
                         {!selectedCategory && <Check className="h-4 w-4" />}
                     </button>
-                    {categories.map((category) => (
-                        <button
-                            key={category.id}
-                            onClick={() => handleCategoryChange(category.slug)}
-                            className={cn(
-                                "flex w-full items-center justify-between text-sm transition-colors hover:text-primary",
-                                selectedCategory === category.slug ? "font-medium text-primary" : "text-muted-foreground"
-                            )}
-                        >
-                            {category.name}
-                            {selectedCategory === category.slug && <Check className="h-4 w-4" />}
-                        </button>
-                    ))}
+                    {categories.map((category) => {
+                        const id = resolveId(category);
+                        const slug = resolveSlug(category.slug);
+                        return (
+                            <button
+                                key={id}
+                                onClick={() => handleCategoryChange(slug)}
+                                className={cn(
+                                    "flex w-full items-center justify-between text-sm transition-colors hover:text-primary",
+                                    selectedCategory === slug ? "font-medium text-primary" : "text-muted-foreground"
+                                )}
+                            >
+                                {category.name}
+                                {selectedCategory === slug && <Check className="h-4 w-4" />}
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 

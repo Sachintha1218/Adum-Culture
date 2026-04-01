@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types";
 import { formatCurrency, cn } from "@/lib/utils";
+import { resolveImageUrl, resolveSlug, resolveId } from "@/lib/sanity-helpers";
 import { useRef } from "react";
 import { useInView } from "framer-motion";
 
@@ -15,11 +16,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const ref = useRef<HTMLAnchorElement>(null);
     const isInView = useInView(ref, { amount: 0.5, margin: "0px 0px -20% 0px" });
 
+    const slug = resolveSlug(product.slug);
+    const id = resolveId(product);
+    const img1 = resolveImageUrl(product.images[0], 600);
+    const img2 = product.images[1] ? resolveImageUrl(product.images[1], 600) : null;
+
     return (
-        <Link ref={ref} href={`/shop/${product.slug}`} className="group block space-y-4">
+        <Link ref={ref} href={`/shop/${slug}`} className="group block space-y-4">
             <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                 <Image
-                    src={product.images[0]}
+                    src={img1}
                     alt={product.name}
                     fill
                     className={cn(
@@ -28,9 +34,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     )}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                {product.images[1] && (
+                {img2 && (
                     <Image
-                        src={product.images[1]}
+                        src={img2}
                         alt={product.name}
                         fill
                         className={cn(
@@ -55,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 <h3 className="text-sm font-medium uppercase tracking-wide text-foreground group-hover:text-primary transition-colors">
                     {product.name}
                 </h3>
-                <p className="mt-1 text-sm text-muted-foreground">{product.category}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{product.categoryName ?? product.category}</p>
                 <div className="mt-2 flex items-center gap-2">
                     <span className="text-sm font-semibold">{formatCurrency(product.price)}</span>
                     {product.originalPrice && (

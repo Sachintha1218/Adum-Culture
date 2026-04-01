@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import Container from "@/components/shared/Container";
+
+export const metadata: Metadata = {
+    title: "Contact Us",
+    description:
+        "Get in touch with the Adum Culture team. We'd love to hear from you — questions, orders, or just to say hello.",
+};
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

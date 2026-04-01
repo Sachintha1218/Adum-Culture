@@ -2,14 +2,27 @@ import Link from "next/link";
 import Container from "@/components/shared/Container";
 import ProductCard from "@/components/shared/ProductCard";
 import { Button } from "@/components/ui/button";
-import { products } from "@/data/products";
+import { client } from "@/sanity/lib/client";
+import { BEST_SELLERS_QUERY } from "@/sanity/lib/queries";
+import { products as fallbackProducts } from "@/data/products";
+import { Product } from "@/types";
 
-const BestSellers = () => {
-    // Filter best sellers and take up to 4
-    const bestSellers = products.filter((p) => p.bestSeller).slice(0, 4);
+const BestSellers = async () => {
+    let displayProducts: Product[] = [];
 
-    // If not enough best sellers, just take first 4 products
-    const displayProducts = bestSellers.length > 0 ? bestSellers : products.slice(0, 4);
+    try {
+        const sanityProducts = await client.fetch(BEST_SELLERS_QUERY);
+        if (sanityProducts?.length > 0) {
+            displayProducts = sanityProducts;
+        } else {
+            // Fall back to static data
+            const bestSellers = fallbackProducts.filter((p) => p.bestSeller).slice(0, 4);
+            displayProducts = bestSellers.length > 0 ? bestSellers : fallbackProducts.slice(0, 4);
+        }
+    } catch {
+        const bestSellers = fallbackProducts.filter((p) => p.bestSeller).slice(0, 4);
+        displayProducts = bestSellers.length > 0 ? bestSellers : fallbackProducts.slice(0, 4);
+    }
 
     return (
         <section className="bg-secondary/30 py-16 md:py-24">
@@ -25,7 +38,7 @@ const BestSellers = () => {
 
                 <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-x-6 md:gap-y-10">
                     {displayProducts.map((product) => (
-                        <ProductCard key={product.id} product={product} />
+                        <ProductCard key={product._id ?? product.id} product={product} />
                     ))}
                 </div>
             </Container>
