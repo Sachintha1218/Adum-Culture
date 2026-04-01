@@ -7,13 +7,15 @@ import { resolveSlug } from "@/lib/sanity-helpers";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://adumculture.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    let productSlugs: string[] = [];
+    let productSlugs: string[] = fallbackProducts.map((p) => resolveSlug(p.slug));
 
     try {
         const slugs = await client.fetch(ALL_PRODUCT_SLUGS_QUERY);
-        productSlugs = slugs?.map((s: { slug: string }) => s.slug) ?? [];
+        if (slugs?.length > 0) {
+            productSlugs = slugs.map((s: { slug: string }) => s.slug);
+        }
     } catch {
-        productSlugs = fallbackProducts.map((p) => resolveSlug(p.slug));
+        // fall through to fallback slugs already set above
     }
 
     const productPages: MetadataRoute.Sitemap = productSlugs.map((slug) => ({
