@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types";
 import { formatCurrency, cn } from "@/lib/utils";
-import { resolveImageUrl, resolveSlug, resolveId } from "@/lib/sanity-helpers";
+import { resolveImageUrl, resolveSlug } from "@/lib/sanity-helpers";
 import { useRef } from "react";
 import { useInView } from "framer-motion";
 
@@ -17,7 +17,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const isInView = useInView(ref, { amount: 0.5, margin: "0px 0px -20% 0px" });
 
     const slug = resolveSlug(product.slug);
-    const id = resolveId(product);
     const img1 = resolveImageUrl(product.images[0], 600);
     const img2 = product.images[1] ? resolveImageUrl(product.images[1], 600) : null;
 

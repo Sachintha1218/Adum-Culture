@@ -19,7 +19,6 @@ import { categories as fallbackCategories } from "@/data/categories";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Product, Category } from "@/types";
-import { resolveSlug } from "@/lib/sanity-helpers";
 
 // Static rendering with ISR - revalidate every 60 seconds
 export const revalidate = 60;
