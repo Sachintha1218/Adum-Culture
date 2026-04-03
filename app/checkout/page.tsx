@@ -251,6 +251,14 @@ export default function CheckoutPage() {
                                 "Proceed to Payment"
                             )}
                         </Button>
+
+                        {/* Payment method badges */}
+                        <div className="mt-4 flex items-center justify-center gap-3">
+                            <span className="text-xs text-muted-foreground">We accept:</span>
+                            <Image src="/images/payment/visa.svg" alt="Visa" width={40} height={26} className="h-6 w-auto opacity-80" />
+                            <Image src="/images/payment/mastercard.svg" alt="Mastercard" width={40} height={26} className="h-6 w-auto opacity-80" />
+                            <Image src="/images/payment/koko.svg" alt="Koko" width={40} height={26} className="h-6 w-auto opacity-80" />
+                        </div>
                     </div>
                 </div>
             </div>

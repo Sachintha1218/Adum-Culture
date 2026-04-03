@@ -21,40 +21,47 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "ADUM CULTURE | Premium Modern Clothing",
-    template: "%s | Adum Culture",
+    default: "Adum Culture | Beyond the Fabrics",
+    template: "%s — Adum Culture",
   },
   description:
-    "Modern luxury fashion for the contemporary woman. Shop premium clothing, dresses, tops, and accessories crafted for the bold and elegant.",
+    "Adum Culture — Sri Lankan luxury fashion brand. Discover bold, premium clothing that celebrates individuality. Shop online at adumculture.com.",
   keywords: [
-    "fashion", "clothing", "Sri Lanka", "luxury fashion", "women clothing",
-    "dresses", "tops", "accessories", "Adum Culture", "modern fashion",
+    "Adum Culture", "fashion", "clothing", "Sri Lanka", "luxury fashion",
+    "women clothing", "dresses", "tops", "accessories", "beyond the fabrics",
   ],
   authors: [{ name: "Adum Culture", url: siteUrl }],
   creator: "Adum Culture",
+  icons: {
+    icon: [
+      { url: "/favicon/Favicon_01.svg", type: "image/svg+xml" },
+      { url: "/favicon/Favicon_01.png", type: "image/png" },
+    ],
+    apple: "/favicon/Favicon_01.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
+    url: "https://adumculture.com",
     siteName: "Adum Culture",
-    title: "ADUM CULTURE | Premium Modern Clothing",
+    title: "Adum Culture | Beyond the Fabrics",
     description:
-      "Modern luxury fashion for the contemporary woman. Shop premium clothing, dresses, tops, and accessories.",
+      "Discover bold, premium fashion from Adum Culture — Sri Lanka's luxury streetwear brand. Shop the latest collections online.",
     images: [
       {
-        url: "/logos/logo-full.png",
+        url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "Adum Culture — Premium Modern Clothing",
+        alt: "Adum Culture — Beyond the Fabrics",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ADUM CULTURE | Premium Modern Clothing",
+    title: "Adum Culture | Beyond the Fabrics",
     description:
-      "Modern luxury fashion for the contemporary woman. Shop premium clothing, dresses, tops, and accessories.",
-    images: ["/logos/logo-full.png"],
+      "Bold, premium Sri Lankan fashion. Shop online at adumculture.com.",
+    images: ["/og-image.svg"],
   },
   robots: {
     index: true,

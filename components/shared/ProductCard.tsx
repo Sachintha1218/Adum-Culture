@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         "object-cover transition-transform duration-500 group-hover:scale-105",
                         isInView && "scale-105 md:scale-100 md:group-hover:scale-105"
                     )}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
                 {img2 && (
                     <Image
@@ -42,7 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                             "absolute inset-0 object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100",
                             isInView && "opacity-100 md:opacity-0 md:group-hover:opacity-100"
                         )}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                     />
                 )}
                 {product.newArrival && (

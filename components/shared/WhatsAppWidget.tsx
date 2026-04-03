@@ -17,7 +17,7 @@ export default function WhatsAppWidget() {
 
     // Use a placeholder number if none is provided. Replace with actual number.
     // Format: country code without '+' followed by number. Example: 94771234567 for Sri Lanka
-    const phoneNumber = "94771234567"; // Replace with actual WhatsApp number
+    const phoneNumber = "94760613070";
     const message = "Hello! I'm interested in Adum Culture products. Can you help me?";
     const encodedMessage = encodeURIComponent(message);
 

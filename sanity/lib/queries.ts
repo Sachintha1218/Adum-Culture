@@ -5,7 +5,7 @@ export const ALL_PRODUCTS_QUERY = groq`
   *[_type == "product"] | order(_createdAt desc) {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     description,
     price,
     originalPrice,
@@ -32,7 +32,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`
   *[_type == "product" && slug.current == $slug][0] {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     description,
     price,
     originalPrice,
@@ -59,7 +59,7 @@ export const BEST_SELLERS_QUERY = groq`
   *[_type == "product" && bestSeller == true] | order(_createdAt desc) [0...4] {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     description,
     price,
     originalPrice,
@@ -82,7 +82,7 @@ export const NEW_ARRIVALS_QUERY = groq`
   *[_type == "product" && newArrival == true] | order(_createdAt desc) [0...8] {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     description,
     price,
     originalPrice,
@@ -105,7 +105,7 @@ export const RELATED_PRODUCTS_QUERY = groq`
   *[_type == "product" && category->slug.current == $category && slug.current != $currentSlug] | order(_createdAt desc) [0...4] {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     description,
     price,
     originalPrice,
@@ -128,12 +128,26 @@ export const ALL_PRODUCT_SLUGS_QUERY = groq`
   *[_type == "product"] { "slug": slug.current }
 `
 
+// ─── Gallery Query — fetches best-seller product images for homepage gallery
+export const GALLERY_IMAGES_QUERY = groq`
+  *[_type == "product" && bestSeller == true] | order(_createdAt desc) [0...7] {
+    _id,
+    name,
+    "slug": slug.current,
+    images[] {
+      asset->{url},
+      hotspot,
+      crop
+    }
+  }
+`
+
 // ─── Category Queries ─────────────────────────────────────────────────
 export const ALL_CATEGORIES_QUERY = groq`
   *[_type == "category"] | order(_createdAt asc) {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     description,
     image {
       asset->{url},
@@ -147,7 +161,7 @@ export const FEATURED_CATEGORIES_QUERY = groq`
   *[_type == "category"] | order(_createdAt asc) [0...3] {
     _id,
     name,
-    slug,
+    "slug": slug.current,
     description,
     image {
       asset->{url},

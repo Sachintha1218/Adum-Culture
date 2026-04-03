@@ -39,10 +39,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     const imageUrl = resolveImageUrl(product.images?.[0], 1200);
     const description = product.description
         ? product.description.slice(0, 160)
-        : `Shop ${product.name} at Adum Culture. Premium modern clothing.`;
+        : `Shop ${product.name} at Adum Culture. Beyond the fabrics.`;
 
     return {
-        title: product.name,
+        title: `${product.name} — Adum Culture`,
         description,
         openGraph: {
             title: `${product.name} | Adum Culture`,

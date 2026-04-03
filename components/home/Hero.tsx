@@ -8,10 +8,10 @@ import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
 
 const heroImages = [
-    "https://images.unsplash.com/photo-1490481651871-61159905d4df?q=80&w=2670&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2574&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1618932260643-eee4a2f60083?q=80&w=2680&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1581044777550-99421f2fc06b?q=80&w=2670&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2670&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=2670&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=2670&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2670&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=2683&auto=format&fit=crop",
 ];
 
@@ -54,7 +54,8 @@ const Hero = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="mb-6 text-sm font-light tracking-[0.2em] uppercase text-gray-200 md:text-base"
                 >
-                    Redefining Modern Elegance
+                    {/* TODO: Hero background images — recommended 1920×1080px (desktop), 768×1024px (mobile). Replace heroImages array with brand photography when assets are ready. */}
+                    Beyond the Fabrics
                 </motion.p>
 
                 {/* Main Title */}
