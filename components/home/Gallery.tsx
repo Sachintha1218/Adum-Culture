@@ -2,7 +2,7 @@ import Container from "@/components/shared/Container";
 import GalleryGrid from "@/components/home/GalleryGrid";
 import { client } from "@/sanity/lib/client";
 import { GALLERY_IMAGES_QUERY } from "@/sanity/lib/queries";
-import { resolveImageUrl, resolveSlug } from "@/lib/sanity-helpers";
+import { resolveImageUrl } from "@/lib/sanity-helpers";
 
 // Static fallback images used when no best-seller products exist in Sanity
 const fallbackImages = [
