@@ -5,5 +5,14 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: true,
+})
+
+// Use for individual document lookups — bypasses CDN so newly-published
+// content is always found immediately (CDN may lag for specific slug queries).
+export const freshClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
 })

@@ -22,7 +22,7 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="sm:col-span-2 md:col-span-1">
                         <Link href="/" className="inline-block">
-                            <Image src="/logos/logo-full.png" alt="Adum Culture" width={200} height={100} className="w-auto h-16 object-contain" />
+                            <Image src="/logos/logo-full.png" alt="Adum Culture" width={280} height={52} className="w-auto h-10 object-contain" />
                         </Link>
                         <p className="mt-4 text-sm text-muted-foreground">
                             Beyond the fabrics. Premium Sri Lankan fashion for the bold, the elegant, and the unapologetic.

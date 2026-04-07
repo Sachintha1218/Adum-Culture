@@ -6,6 +6,10 @@ import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { client } from "@/sanity/lib/client";
+import { ALL_CATEGORIES_QUERY } from "@/sanity/lib/queries";
+import { categories as fallbackCategories } from "@/data/categories";
+import { Category } from "@/types";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 const poppins = Poppins({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"], variable: "--font-heading" });
@@ -70,11 +74,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let shopCategories: Category[] = fallbackCategories;
+  try {
+    const fetched = await client.fetch(ALL_CATEGORIES_QUERY);
+    if (fetched?.length > 0) shopCategories = fetched;
+  } catch {
+    // fallback already set
+  }
+
   return (
     <html lang="en">
       <body className={cn(
@@ -84,7 +96,7 @@ export default function RootLayout({
       )}>
         <AuthProvider>
           <CartProvider>
-            <SiteShell>
+            <SiteShell shopCategories={shopCategories}>
               {children}
             </SiteShell>
           </CartProvider>

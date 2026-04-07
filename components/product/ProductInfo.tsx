@@ -104,7 +104,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     <button onClick={() => setIsSizeGuideOpen(true)} className="text-xs text-muted-foreground underline uppercase tracking-widest hover:text-foreground transition-colors">Size Guide</button>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                    {product.sizes.map((size) => (
+                    {(product.sizes ?? []).map((size) => (
                         <button
                             key={size}
                             onClick={() => setSelectedSize(size)}

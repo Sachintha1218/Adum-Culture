@@ -4,8 +4,9 @@ import Container from "@/components/shared/Container";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import ProductCard from "@/components/shared/ProductCard";
-import { client } from "@/sanity/lib/client";
+import { freshClient } from "@/sanity/lib/client";
 import {
+    ALL_PRODUCTS_QUERY,
     PRODUCT_BY_SLUG_QUERY,
     ALL_PRODUCT_SLUGS_QUERY,
     RELATED_PRODUCTS_QUERY,
@@ -15,6 +16,7 @@ import { Product } from "@/types";
 import { resolveSlug, resolveImageUrl } from "@/lib/sanity-helpers";
 
 export const revalidate = 60;
+export const dynamicParams = true;
 
 interface ProductPageProps {
     params: {
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     let product: Product | null = null;
 
     try {
-        product = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug: params.slug });
+        product = await freshClient.fetch(PRODUCT_BY_SLUG_QUERY, { slug: params.slug });
     } catch {}
 
     if (!product) {
@@ -61,7 +63,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export async function generateStaticParams() {
     try {
-        const slugs = await client.fetch(ALL_PRODUCT_SLUGS_QUERY);
+        const slugs = await freshClient.fetch(ALL_PRODUCT_SLUGS_QUERY);
         if (slugs?.length > 0) {
             return slugs.map((item: { slug: string }) => ({ slug: item.slug }));
         }
@@ -76,21 +78,27 @@ export async function generateStaticParams() {
 export default async function ProductPage({ params }: ProductPageProps) {
     let product: Product | null = null;
     let relatedProducts: Product[] = [];
+    const slug = params.slug;
 
+    // Strategy 1: parameterised GROQ query (fastest)
     try {
-        product = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug: params.slug });
-    } catch {
-        // Fall back to static data
+        product = await freshClient.fetch(PRODUCT_BY_SLUG_QUERY, { slug });
+    } catch { /* continue */ }
+
+    // Strategy 2: fetch all Sanity products and find by slug (bypasses param issues)
+    if (!product) {
+        try {
+            const all: Product[] = await freshClient.fetch(ALL_PRODUCTS_QUERY);
+            product = all?.find((p) => resolveSlug(p.slug) === slug) ?? null;
+        } catch { /* continue */ }
     }
 
-    // Fall back to static data if Sanity returns nothing
+    // Strategy 3: static fallback data
     if (!product) {
         const staticProduct = fallbackProducts.find(
-            (p) => resolveSlug(p.slug) === params.slug
+            (p) => resolveSlug(p.slug) === slug
         );
-        if (staticProduct) {
-            product = staticProduct as Product;
-        }
+        if (staticProduct) product = staticProduct as Product;
     }
 
     if (!product) {
@@ -99,7 +107,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     // Fetch related products
     try {
-        relatedProducts = await client.fetch(RELATED_PRODUCTS_QUERY, {
+        relatedProducts = await freshClient.fetch(RELATED_PRODUCTS_QUERY, {
             category: product.category,
             currentSlug: params.slug,
         });

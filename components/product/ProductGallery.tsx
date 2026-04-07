@@ -11,7 +11,7 @@ interface ProductGalleryProps {
 }
 
 const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
-    const resolvedImages = images.map((img) => resolveImageUrl(img, 1200));
+    const resolvedImages = (images ?? []).map((img) => resolveImageUrl(img, 1200));
     const [selectedImage, setSelectedImage] = useState(resolvedImages[0] || "");
 
 

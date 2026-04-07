@@ -65,19 +65,43 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
 
     if (searchParams.search) {
-        const query = searchParams.search;
-        const fuse = new Fuse(filteredProducts, {
-            keys: [
-                { name: "name", weight: 0.6 },
-                { name: "category", weight: 0.3 },
-                { name: "description", weight: 0.1 },
-            ],
-            threshold: 0.2,
-            distance: 100,
-            ignoreLocation: true,
-        });
-        const results = fuse.search(query);
-        filteredProducts = results.map((result) => result.item);
+        const query = searchParams.search.trim();
+        if (query.length > 0) {
+            const q = query.toLowerCase();
+            if (query.length <= 2) {
+                // Short queries: simple substring match so single letters return all matching products
+                filteredProducts = filteredProducts.filter((p) =>
+                    p.name.toLowerCase().includes(q) ||
+                    (p.category && p.category.toLowerCase().includes(q)) ||
+                    (p.categoryName && p.categoryName.toLowerCase().includes(q)) ||
+                    (p.description && p.description.toLowerCase().includes(q))
+                );
+            } else {
+                // Longer queries: fuzzy search with permissive threshold
+                const fuse = new Fuse(filteredProducts, {
+                    keys: [
+                        { name: "name", weight: 0.6 },
+                        { name: "categoryName", weight: 0.2 },
+                        { name: "category", weight: 0.2 },
+                        { name: "description", weight: 0.1 },
+                    ],
+                    threshold: 0.45,
+                    distance: 300,
+                    ignoreLocation: true,
+                    minMatchCharLength: 2,
+                });
+                const results = fuse.search(query);
+                // Fall back to substring if fuzzy returns nothing
+                filteredProducts = results.length > 0
+                    ? results.map((r) => r.item)
+                    : filteredProducts.filter((p) =>
+                        p.name.toLowerCase().includes(q) ||
+                        (p.category && p.category.toLowerCase().includes(q)) ||
+                        (p.categoryName && p.categoryName.toLowerCase().includes(q)) ||
+                        (p.description && p.description.toLowerCase().includes(q))
+                    );
+            }
+        }
     }
 
     if (searchParams.sizes) {

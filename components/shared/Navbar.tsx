@@ -12,39 +12,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import { CartSheet } from "@/components/shop/CartSheet";
-
-const routes = [
-    { href: "/", label: "Home" },
-    {
-        href: "/shop",
-        label: "Shop",
-        subItems: [
-            { href: "/shop", label: "All Collection" },
-            { href: "/shop?category=dresses", label: "Dresses" },
-            { href: "/shop?category=tops", label: "Tops" },
-            { href: "/shop?category=bottoms", label: "Bottoms" },
-        ]
-    },
-    { href: "/about", label: "About" },
-    {
-        href: "/gift-vouchers",
-        label: "Gift Vouchers",
-        subItems: [
-            { href: "/gift-vouchers", label: "All Vouchers" },
-            { href: "/gift-vouchers/standard", label: "Standard Voucher" },
-            { href: "/gift-vouchers/birthday", label: "Birthdays" },
-            { href: "/gift-vouchers/anniversary", label: "Anniversaries" },
-            { href: "/gift-vouchers/valentine", label: "Valentine's Day" },
-            { href: "/gift-vouchers/new-year", label: "New Years" },
-            { href: "/gift-vouchers/wedding", label: "Weddings" },
-            { href: "/gift-vouchers/mother", label: "Mother's Day" },
-            { href: "/gift-vouchers/womens-day", label: "Women's Day" },
-            { href: "/gift-vouchers/friendship", label: "Friendship" },
-            { href: "/gift-vouchers/for-her", label: "For Her" },
-        ]
-    },
-    { href: "/contact", label: "Contact" },
-];
+import { resolveSlug } from "@/lib/sanity-helpers";
+import { Category } from "@/types";
 
 const MobileNavItem = ({
     route,
@@ -123,12 +92,44 @@ const MobileNavItem = ({
     );
 };
 
-const Navbar = () => {
+const Navbar = ({ shopCategories = [] }: { shopCategories?: Category[] }) => {
     const pathname = usePathname();
     const { cartCount, openCart } = useCart();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [expandedItem, setExpandedItem] = useState<string | null>(null);
+
+    const shopSubItems = [
+        { href: "/shop", label: "All Collection" },
+        ...shopCategories.map((c) => ({
+            href: `/shop?category=${resolveSlug(c.slug)}`,
+            label: c.name,
+        })),
+    ];
+
+    const routes = [
+        { href: "/", label: "Home" },
+        { href: "/shop", label: "Shop", subItems: shopSubItems },
+        { href: "/about", label: "About" },
+        {
+            href: "/gift-vouchers",
+            label: "Gift Vouchers",
+            subItems: [
+                { href: "/gift-vouchers", label: "All Vouchers" },
+                { href: "/gift-vouchers/standard", label: "Standard Voucher" },
+                { href: "/gift-vouchers/birthday", label: "Birthdays" },
+                { href: "/gift-vouchers/anniversary", label: "Anniversaries" },
+                { href: "/gift-vouchers/valentine", label: "Valentine's Day" },
+                { href: "/gift-vouchers/new-year", label: "New Years" },
+                { href: "/gift-vouchers/wedding", label: "Weddings" },
+                { href: "/gift-vouchers/mother", label: "Mother's Day" },
+                { href: "/gift-vouchers/womens-day", label: "Women's Day" },
+                { href: "/gift-vouchers/friendship", label: "Friendship" },
+                { href: "/gift-vouchers/for-her", label: "For Her" },
+            ]
+        },
+        { href: "/contact", label: "Contact" },
+    ];
 
     // Handle scroll effect
     useEffect(() => {
@@ -179,7 +180,7 @@ const Navbar = () => {
                             {/* Premium Header */}
                             <div className="flex h-[72px] shrink-0 items-center justify-between px-6 border-b border-[#1A1A1A]/5 shadow-[0_1px_2px_rgba(0,0,0,0.01)] sticky top-0 bg-[#F7F6F4] z-10 w-full">
                                 <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
-                                    <Image src="/logos/logo-nav.png" alt="Adum Culture" priority width={160} height={28} className="w-auto h-5 md:h-6 object-contain" />
+                                    <Image src="/logos/logo-nav.png" alt="Adum Culture" priority width={200} height={36} className="w-auto h-8 object-contain" />
                                 </Link>
                                 {/* Close button is handled by SheetPrimitive.Close in sheet.tsx, but we can style it there. Or we just leave the default one. The default SheetContent has the X top-right. Let's make sure it doesn't overlap. Actually, we can remove the default one and build ours if needed, but given we don't want to modify sheet.tsx intensely right now, we will rely on default. */}
                             </div>
@@ -206,13 +207,10 @@ const Navbar = () => {
                         <Image
                             src="/logos/logo-nav.png"
                             alt="Adum Culture"
-                            width={180}
-                            height={34}
+                            width={220}
+                            height={40}
                             priority
-                            className={cn(
-                                "w-auto h-6 md:h-7 lg:h-8 object-contain transition-all duration-300",
-                                isHome && !scrolled ? "brightness-0 invert filter" : ""
-                            )}
+                            className="w-auto h-8 md:h-9 lg:h-10 object-contain"
                         />
                     </Link>
 
@@ -272,11 +270,8 @@ const Navbar = () => {
                                     className="max-w-2xl mx-auto w-full relative"
                                     onSubmit={(e) => {
                                         e.preventDefault();
-                                        const formData = new FormData(e.currentTarget);
-                                        const query = formData.get("search");
-                                        if (query) {
-                                            window.location.href = `/shop?search=${query}`;
-                                        }
+                                        const val = (e.currentTarget.elements.namedItem("search") as HTMLInputElement)?.value.trim();
+                                        if (val) window.location.href = `/shop?search=${encodeURIComponent(val)}`;
                                     }}
                                 >
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
@@ -286,6 +281,15 @@ const Navbar = () => {
                                         placeholder="Search for products..."
                                         className="w-full h-16 pl-14 pr-4 text-xl border-b-2 border-primary/20 bg-transparent focus:border-primary focus:outline-none transition-colors"
                                         autoFocus
+                                        onChange={(e) => {
+                                            const val = e.target.value.trim();
+                                            clearTimeout((window as Window & { _searchTimer?: ReturnType<typeof setTimeout> })._searchTimer);
+                                            (window as Window & { _searchTimer?: ReturnType<typeof setTimeout> })._searchTimer = setTimeout(() => {
+                                                if (val.length >= 1) {
+                                                    window.location.href = `/shop?search=${encodeURIComponent(val)}`;
+                                                }
+                                            }, 500);
+                                        }}
                                     />
                                     <button type="submit" className="sr-only">Search</button>
                                 </form>
