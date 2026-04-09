@@ -39,8 +39,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     if (!product) return { title: "Product Not Found" };
 
     const imageUrl = resolveImageUrl(product.images?.[0], 1200);
-    const description = product.description
-        ? product.description.slice(0, 160)
+    const rawDesc = Array.isArray(product.description)
+        ? product.description.join(" ")
+        : (product.description ?? "");
+    const description = rawDesc
+        ? rawDesc.slice(0, 160)
         : `Shop ${product.name} at Adum Culture. Beyond the fabrics.`;
 
     return {
