@@ -24,7 +24,9 @@ export const product = defineType({
     defineField({
       name: 'description',
       title: 'Description',
-      type: 'text',
+      description: 'Add one or more lines. Multiple lines are shown as bullet points on the product page.',
+      type: 'array',
+      of: [{ type: 'string' }],
     }),
     defineField({
       name: 'price',
@@ -103,16 +105,34 @@ export const product = defineType({
       name: 'modelDetails',
       title: 'Model Details',
       type: 'string',
+      description: 'e.g. "Model is 5\'9" and wearing size M"',
     }),
     defineField({
       name: 'material',
       title: 'Material',
-      type: 'text',
+      description: 'e.g. "100% Premium Cotton" or "80% Cotton, 20% Polyester"',
+      type: 'string',
     }),
     defineField({
       name: 'careInstructions',
       title: 'Care Instructions',
-      type: 'text',
+      description: 'Add each care instruction as a separate item — they will appear as bullet points.',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'styleGuide',
+      title: 'Style Guide',
+      description: 'Styling tips for this product. Each item becomes a bullet point.',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'shippingInfo',
+      title: 'Shipping & Returns',
+      description: 'Shipping and returns info. Each item becomes a bullet point.',
+      type: 'array',
+      of: [{ type: 'string' }],
     }),
   ],
 });

@@ -202,7 +202,7 @@ const Navbar = ({ shopCategories = [] }: { shopCategories?: Category[] }) => {
                         </SheetContent>
                     </Sheet>
 
-                    {/* Logo */}
+                    {/* Logo — inverts to white when navbar is transparent over dark hero */}
                     <Link href="/" className="flex items-center">
                         <Image
                             src="/logos/logo-nav.png"
@@ -210,7 +210,10 @@ const Navbar = ({ shopCategories = [] }: { shopCategories?: Category[] }) => {
                             width={220}
                             height={40}
                             priority
-                            className="w-auto h-8 md:h-9 lg:h-10 object-contain"
+                            className={cn(
+                                "w-auto h-8 md:h-9 lg:h-10 object-contain transition-all duration-300",
+                                isHome && !scrolled ? "brightness-0 invert" : ""
+                            )}
                         />
                     </Link>
 

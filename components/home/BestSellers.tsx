@@ -2,27 +2,29 @@ import Link from "next/link";
 import Container from "@/components/shared/Container";
 import ProductCard from "@/components/shared/ProductCard";
 import { Button } from "@/components/ui/button";
-import { client } from "@/sanity/lib/client";
-import { BEST_SELLERS_QUERY } from "@/sanity/lib/queries";
-import { products as fallbackProducts } from "@/data/products";
+import { freshClient } from "@/sanity/lib/client";
+import { BEST_SELLERS_QUERY, ALL_PRODUCTS_QUERY } from "@/sanity/lib/queries";
 import { Product } from "@/types";
 
 const BestSellers = async () => {
     let displayProducts: Product[] = [];
 
     try {
-        const sanityProducts = await client.fetch(BEST_SELLERS_QUERY);
-        if (sanityProducts?.length > 0) {
-            displayProducts = sanityProducts;
+        // Try best sellers first
+        const bestSellers = await freshClient.fetch(BEST_SELLERS_QUERY);
+        if (bestSellers?.length > 0) {
+            displayProducts = bestSellers;
         } else {
-            // Fall back to static data
-            const bestSellers = fallbackProducts.filter((p) => p.bestSeller).slice(0, 4);
-            displayProducts = bestSellers.length > 0 ? bestSellers : fallbackProducts.slice(0, 4);
+            // No best sellers marked — show latest 4 Sanity products instead
+            const all = await freshClient.fetch(ALL_PRODUCTS_QUERY);
+            displayProducts = all?.slice(0, 4) ?? [];
         }
     } catch {
-        const bestSellers = fallbackProducts.filter((p) => p.bestSeller).slice(0, 4);
-        displayProducts = bestSellers.length > 0 ? bestSellers : fallbackProducts.slice(0, 4);
+        displayProducts = [];
     }
+
+    // Don't render the section if Sanity has no products at all
+    if (displayProducts.length === 0) return null;
 
     return (
         <section className="bg-secondary/30 py-16 md:py-24">
@@ -32,7 +34,7 @@ const BestSellers = async () => {
                         Best Sellers
                     </h2>
                     <Button variant="link" className="text-xs md:text-base text-primary inline-flex px-0" asChild>
-                        <Link href="/shop?category=best-sellers">View All</Link>
+                        <Link href="/shop">View All</Link>
                     </Button>
                 </div>
 

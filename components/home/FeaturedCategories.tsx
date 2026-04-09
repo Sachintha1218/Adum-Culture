@@ -1,9 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/shared/Container";
-import { client } from "@/sanity/lib/client";
+import { freshClient } from "@/sanity/lib/client";
 import { FEATURED_CATEGORIES_QUERY } from "@/sanity/lib/queries";
-import { categories as fallbackCategories } from "@/data/categories";
 import { resolveImageUrl, resolveSlug, resolveId } from "@/lib/sanity-helpers";
 import { Category } from "@/types";
 
@@ -11,11 +10,21 @@ const FeaturedCategories = async () => {
     let featured: Category[] = [];
 
     try {
-        const sanityCategories = await client.fetch(FEATURED_CATEGORIES_QUERY);
-        featured = sanityCategories?.length > 0 ? sanityCategories : fallbackCategories.slice(0, 3);
+        const sanityCategories = await freshClient.fetch(FEATURED_CATEGORIES_QUERY);
+        featured = sanityCategories ?? [];
     } catch {
-        featured = fallbackCategories.slice(0, 3);
+        featured = [];
     }
+
+    // Don't render the section if no categories exist in Sanity
+    if (featured.length === 0) return null;
+
+    const gridClass =
+        featured.length === 1
+            ? "grid gap-6 max-w-lg mx-auto"
+            : featured.length === 2
+            ? "grid gap-6 sm:grid-cols-2"
+            : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3";
 
     return (
         <section className="py-16 md:py-24">
@@ -23,7 +32,7 @@ const FeaturedCategories = async () => {
                 <h2 className="mb-12 text-center text-3xl font-bold uppercase tracking-widest md:text-4xl">
                     Shop by Category
                 </h2>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className={gridClass}>
                     {featured.map((category) => {
                         const id = resolveId(category);
                         const slug = resolveSlug(category.slug);

@@ -24,7 +24,9 @@ export const ALL_PRODUCTS_QUERY = groq`
     stock,
     modelDetails,
     material,
-    careInstructions
+    careInstructions,
+    styleGuide,
+    shippingInfo
   }
 `
 
@@ -51,7 +53,9 @@ export const PRODUCT_BY_SLUG_QUERY = groq`
     stock,
     modelDetails,
     material,
-    careInstructions
+    careInstructions,
+    styleGuide,
+    shippingInfo
   }
 `
 
@@ -64,6 +68,7 @@ export const BEST_SELLERS_QUERY = groq`
     price,
     originalPrice,
     "category": category->slug.current,
+    "categoryName": category->name,
     images[] {
       asset->{url},
       hotspot,
@@ -87,6 +92,7 @@ export const NEW_ARRIVALS_QUERY = groq`
     price,
     originalPrice,
     "category": category->slug.current,
+    "categoryName": category->name,
     images[] {
       asset->{url},
       hotspot,
@@ -142,6 +148,25 @@ export const GALLERY_IMAGES_QUERY = groq`
   }
 `
 
+// ─── Hero Slides Query ────────────────────────────────────────────────
+export const HERO_SLIDES_QUERY = groq`
+  *[_type == "heroSlide" && active == true] | order(order asc) {
+    _id,
+    order,
+    alt,
+    desktopImage {
+      asset->{url},
+      hotspot,
+      crop
+    },
+    mobileImage {
+      asset->{url},
+      hotspot,
+      crop
+    }
+  }
+`
+
 // ─── Category Queries ─────────────────────────────────────────────────
 export const ALL_CATEGORIES_QUERY = groq`
   *[_type == "category"] | order(_createdAt asc) {
@@ -158,7 +183,7 @@ export const ALL_CATEGORIES_QUERY = groq`
 `
 
 export const FEATURED_CATEGORIES_QUERY = groq`
-  *[_type == "category"] | order(_createdAt asc) [0...3] {
+  *[_type == "category"] | order(_createdAt asc) {
     _id,
     name,
     "slug": slug.current,

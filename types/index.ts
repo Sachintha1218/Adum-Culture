@@ -11,7 +11,7 @@ export interface Product {
   _id?: string;
   id?: string;
   name: string;
-  description: string;
+  description?: string | string[];
   price: number;
   originalPrice?: number;
   category: string;
@@ -27,7 +27,9 @@ export interface Product {
   stock?: number;
   modelDetails?: string;
   material?: string;
-  careInstructions?: string;
+  careInstructions?: string | string[];
+  styleGuide?: string[];
+  shippingInfo?: string[];
 }
 
 // ─── Category ─────────────────────────────────────────────────────────────

@@ -12,7 +12,7 @@ import Container from "@/components/shared/Container";
 import ProductCard from "@/components/shared/ProductCard";
 import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { SortSelect } from "@/components/shop/SortSelect";
-import { client } from "@/sanity/lib/client";
+import { freshClient } from "@/sanity/lib/client";
 import { ALL_PRODUCTS_QUERY, ALL_CATEGORIES_QUERY } from "@/sanity/lib/queries";
 import { products as fallbackProducts } from "@/data/products";
 import { categories as fallbackCategories } from "@/data/categories";
@@ -20,8 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Product, Category } from "@/types";
 
-// Static rendering with ISR - revalidate every 60 seconds
-export const revalidate = 60;
+// Always fetch fresh data from Sanity
+export const revalidate = 0;
 
 interface ShopPageProps {
     searchParams: {
@@ -39,14 +39,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     let allCategories: Category[] = [];
 
     try {
-        const sanityProducts = await client.fetch(ALL_PRODUCTS_QUERY);
+        const sanityProducts = await freshClient.fetch(ALL_PRODUCTS_QUERY);
         allProducts = sanityProducts?.length > 0 ? sanityProducts : fallbackProducts;
     } catch {
         allProducts = fallbackProducts;
     }
 
     try {
-        const sanityCategories = await client.fetch(ALL_CATEGORIES_QUERY);
+        const sanityCategories = await freshClient.fetch(ALL_CATEGORIES_QUERY);
         allCategories = sanityCategories?.length > 0 ? sanityCategories : fallbackCategories;
     } catch {
         allCategories = fallbackCategories;
@@ -70,12 +70,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             const q = query.toLowerCase();
             if (query.length <= 2) {
                 // Short queries: simple substring match so single letters return all matching products
-                filteredProducts = filteredProducts.filter((p) =>
-                    p.name.toLowerCase().includes(q) ||
-                    (p.category && p.category.toLowerCase().includes(q)) ||
-                    (p.categoryName && p.categoryName.toLowerCase().includes(q)) ||
-                    (p.description && p.description.toLowerCase().includes(q))
-                );
+                filteredProducts = filteredProducts.filter((p) => {
+                    const desc = Array.isArray(p.description) ? p.description.join(" ") : (p.description ?? "");
+                    return (
+                        p.name.toLowerCase().includes(q) ||
+                        (p.category && p.category.toLowerCase().includes(q)) ||
+                        (p.categoryName && p.categoryName.toLowerCase().includes(q)) ||
+                        desc.toLowerCase().includes(q)
+                    );
+                });
             } else {
                 // Longer queries: fuzzy search with permissive threshold
                 const fuse = new Fuse(filteredProducts, {
@@ -94,12 +97,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 // Fall back to substring if fuzzy returns nothing
                 filteredProducts = results.length > 0
                     ? results.map((r) => r.item)
-                    : filteredProducts.filter((p) =>
-                        p.name.toLowerCase().includes(q) ||
-                        (p.category && p.category.toLowerCase().includes(q)) ||
-                        (p.categoryName && p.categoryName.toLowerCase().includes(q)) ||
-                        (p.description && p.description.toLowerCase().includes(q))
-                    );
+                    : filteredProducts.filter((p) => {
+                        const desc = Array.isArray(p.description) ? p.description.join(" ") : (p.description ?? "");
+                        return (
+                            p.name.toLowerCase().includes(q) ||
+                            (p.category && p.category.toLowerCase().includes(q)) ||
+                            (p.categoryName && p.categoryName.toLowerCase().includes(q)) ||
+                            desc.toLowerCase().includes(q)
+                        );
+                    });
             }
         }
     }

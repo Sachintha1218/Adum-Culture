@@ -17,6 +17,19 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import { SizeGuideModal } from "./SizeGuideModal";
 
+// Renders a string as a paragraph, or an array as bullet points (or a single paragraph if only 1 item)
+const BulletOrText = ({ value }: { value: string | string[] | undefined }) => {
+    if (!value) return null;
+    const items = Array.isArray(value) ? value : [value];
+    if (items.length === 0) return null;
+    if (items.length === 1) return <p>{items[0]}</p>;
+    return (
+        <ul className="list-disc list-inside space-y-1">
+            {items.map((item, i) => <li key={i}>{item}</li>)}
+        </ul>
+    );
+};
+
 interface ProductInfoProps {
     product: Product;
 }
@@ -175,39 +188,58 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             <Separator />
 
             <Accordion type="single" collapsible className="w-full">
+                {/* Description */}
+                {product.description && (Array.isArray(product.description) ? product.description.length > 0 : true) && (
                 <AccordionItem value="description">
                     <AccordionTrigger className="uppercase tracking-widest text-sm">Description</AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground leading-relaxed space-y-4">
-                        <p>{product.description}</p>
+                    <AccordionContent className="text-muted-foreground leading-relaxed space-y-3">
+                        <BulletOrText value={product.description} />
                         {product.modelDetails && (
-                            <p className="text-sm font-medium text-foreground">
-                                <strong>Model Details:</strong> {product.modelDetails}
+                            <p className="text-sm font-medium text-foreground mt-2">
+                                <strong>Model:</strong> {product.modelDetails}
                             </p>
                         )}
                     </AccordionContent>
                 </AccordionItem>
+                )}
+
+                {/* Fabric & Care */}
+                {(product.material || product.careInstructions) && (
                 <AccordionItem value="fabric">
                     <AccordionTrigger className="uppercase tracking-widest text-sm">Fabric & Care</AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground leading-relaxed space-y-4">
-                        <p><strong>Material:</strong> {product.material || "Premium quality materials sourced responsibly."}</p>
-                        <p><strong>Care Instructions:</strong> {product.careInstructions || "Dry clean only. Do not bleach. Iron on low heat."}</p>
+                    <AccordionContent className="text-muted-foreground leading-relaxed space-y-3">
+                        {product.material && (
+                            <p><strong>Material:</strong> {product.material}</p>
+                        )}
+                        {product.careInstructions && (Array.isArray(product.careInstructions) ? product.careInstructions.length > 0 : true) && (
+                            <div>
+                                <p className="font-medium text-foreground mb-1">Care Instructions</p>
+                                <BulletOrText value={product.careInstructions} />
+                            </div>
+                        )}
                     </AccordionContent>
                 </AccordionItem>
+                )}
+
+                {/* Style Guide */}
+                {product.styleGuide && product.styleGuide.length > 0 && (
                 <AccordionItem value="style">
                     <AccordionTrigger className="uppercase tracking-widest text-sm">Style Guide</AccordionTrigger>
                     <AccordionContent className="text-muted-foreground leading-relaxed">
-                        Pair this piece with minimalistic jewelry and classic footwear for an effortlessly chic look.
-                        Its versatile design allows it to transition seamlessly from day to night.
-                        Tonal accessories are highly recommended to elevate the overall aesthetic.
+                        <BulletOrText value={product.styleGuide} />
                     </AccordionContent>
                 </AccordionItem>
+                )}
+
+                {/* Shipping & Returns */}
+                {product.shippingInfo && product.shippingInfo.length > 0 && (
                 <AccordionItem value="shipping">
                     <AccordionTrigger className="uppercase tracking-widest text-sm">Shipping & Returns</AccordionTrigger>
                     <AccordionContent className="text-muted-foreground leading-relaxed">
-                        Free standard shipping on all orders over LKR 10,000.<br />
-                        Returns are accepted within 14 days of delivery for unworn items with tags attached.
+                        <BulletOrText value={product.shippingInfo} />
                     </AccordionContent>
                 </AccordionItem>
+                )}
             </Accordion>
 
             {/* Instalment Payments */}

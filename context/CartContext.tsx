@@ -67,8 +67,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
     const addToCart = (product: Product, quantity: number, selectedSize: string) => {
         setCartItems((prevItems) => {
+            const productId = product._id ?? product.id;
             const existingItemIndex = prevItems.findIndex(
-                (item) => item.id === product.id && item.selectedSize === selectedSize
+                (item) => (item._id ?? item.id) === productId && item.selectedSize === selectedSize
             );
 
             if (existingItemIndex > -1) {
@@ -84,7 +85,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
     const removeFromCart = (productId: string, selectedSize: string) => {
         setCartItems((prevItems) =>
-            prevItems.filter((item) => !(item.id === productId && item.selectedSize === selectedSize))
+            prevItems.filter((item) => !((item._id ?? item.id) === productId && item.selectedSize === selectedSize))
         );
     };
 
@@ -92,7 +93,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         if (quantity < 1) return;
         setCartItems((prevItems) =>
             prevItems.map((item) =>
-                item.id === productId && item.selectedSize === selectedSize
+                (item._id ?? item.id) === productId && item.selectedSize === selectedSize
                     ? { ...item, quantity }
                     : item
             )
