@@ -91,6 +91,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         return sizeMapping[size] || size;
     };
 
+    const discountPercentage = product.originalPrice && product.originalPrice > product.price
+        ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+        : 0;
+
     return (
         <div className="flex flex-col gap-y-8 sticky top-24">
             <div>
@@ -98,11 +102,18 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     <p className="text-sm text-muted-foreground uppercase tracking-widest mb-2">Item Code: {product.itemCode}</p>
                 )}
                 <h1 className="font-serif text-4xl font-bold uppercase tracking-widest text-foreground md:text-5xl">{product.name}</h1>
-                <div className="mt-4 flex items-center gap-4">
-                    <p className="text-2xl font-light text-primary">{formatCurrency(product.price)}</p>
-                    {product.originalPrice && (
-                        <p className="text-lg text-muted-foreground line-through">{formatCurrency(product.originalPrice)}</p>
+                <div className="mt-4 flex flex-col items-start gap-1">
+                    {discountPercentage > 0 && (
+                        <div className="mb-1 bg-[#B91C1C] px-2.5 py-1 text-sm font-bold text-white tracking-widest">
+                            {discountPercentage}% OFF
+                        </div>
                     )}
+                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        {product.originalPrice && (
+                            <p className="text-2xl text-muted-foreground line-through decoration-gray-400 font-medium">{formatCurrency(product.originalPrice)}</p>
+                        )}
+                        <p className="text-4xl font-bold text-foreground">{formatCurrency(product.price)}</p>
+                    </div>
                 </div>
                 {product.stock !== undefined && (
                     <p className="mt-2 text-sm text-green-600 font-medium">
@@ -161,7 +172,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     </div>
                     <div className="flex flex-col sm:flex-row flex-1 gap-2">
                         <Button
-                            className="flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
+                            className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
                             size="lg"
                             variant="outline"
                             onClick={handleAddToCart}
@@ -171,7 +182,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                             {!isAdding && <ShoppingBag className="ml-2 h-4 w-4" />}
                         </Button>
                         <Button
-                            className="flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
+                            className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
                             size="lg"
                             onClick={handleBuyNow}
                         >

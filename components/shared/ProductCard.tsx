@@ -19,6 +19,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const slug = resolveSlug(product.slug);
     const img1 = resolveImageUrl(product.images[0], 600);
     const img2 = product.images[1] ? resolveImageUrl(product.images[1], 600) : null;
+    const discountPercentage = product.originalPrice && product.originalPrice > product.price
+        ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+        : 0;
 
     return (
         <Link ref={ref} href={`/shop/${slug}`} className="group block space-y-4">
@@ -50,9 +53,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         New
                     </div>
                 )}
-                {product.originalPrice && (
-                    <div className="absolute left-2 top-2 bg-red-600 px-2 py-1 text-xs font-medium text-white uppercase tracking-wider">
-                        Sale
+                {discountPercentage > 0 && (
+                    <div className="absolute left-2 bottom-2 bg-[#B91C1C] px-2 py-1 text-xs font-bold text-white tracking-widest z-10">
+                        {discountPercentage}% OFF
                     </div>
                 )}
             </div>
@@ -61,11 +64,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     {product.name}
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">{product.categoryName ?? product.category}</p>
-                <div className="mt-2 flex items-center gap-2">
-                    <span className="text-sm font-semibold">{formatCurrency(product.price)}</span>
+                <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                     {product.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through decoration-red-500">{formatCurrency(product.originalPrice)}</span>
+                        <span className="text-sm font-medium text-muted-foreground line-through decoration-gray-400">{formatCurrency(product.originalPrice)}</span>
                     )}
+                    <span className={cn(
+                        "text-[15px] font-bold",
+                        discountPercentage > 0 ? "text-[#B91C1C]" : "text-foreground"
+                    )}>{formatCurrency(product.price)}</span>
                 </div>
             </div>
         </Link>
