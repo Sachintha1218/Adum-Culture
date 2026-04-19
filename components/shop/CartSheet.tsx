@@ -141,7 +141,7 @@ export function CartSheet() {
                                 <span>{formatCurrency(finalTotal)}</span>
                             </div>
                             <p className="text-[10px] text-muted-foreground pt-1">
-                                Taxes included. Additional shipping info available at checkout.
+                                Taxes included. Discount info available at checkout.
                             </p>
                         </div>
                         <Button
