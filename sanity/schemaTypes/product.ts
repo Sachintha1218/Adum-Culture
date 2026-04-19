@@ -72,6 +72,13 @@ export const product = defineType({
       },
     }),
     defineField({
+      name: 'sizeGuide',
+      title: 'Size Guide',
+      type: 'reference',
+      to: [{ type: 'sizeGuide' }],
+      description: 'Select a previously uploaded size guide for this product (optional).',
+    }),
+    defineField({
       name: 'colors',
       title: 'Colors',
       type: 'array',

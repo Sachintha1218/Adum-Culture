@@ -11,6 +11,7 @@ interface CartContextType {
     clearCart: () => void;
     cartCount: number;
     cartTotal: number;
+    shippingCharge: number;
     finalTotal: number;
     discount: number;
     appliedCouponCode: string | null;
@@ -118,7 +119,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
     const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
     const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-    const finalTotal = Math.max(0, cartTotal - discount);
+    const shippingCharge = cartTotal > 0 && cartTotal < 10000 ? 250 : 0;
+    const finalTotal = Math.max(0, cartTotal - discount) + shippingCharge;
 
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);
@@ -133,6 +135,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 clearCart,
                 cartCount,
                 cartTotal,
+                shippingCharge,
                 finalTotal,
                 discount,
                 appliedCouponCode,

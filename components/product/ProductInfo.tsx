@@ -280,7 +280,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 </div>
             </div>
 
-            <SizeGuideModal isOpen={isSizeGuideOpen} onClose={() => setIsSizeGuideOpen(false)} />
+            <SizeGuideModal isOpen={isSizeGuideOpen} onClose={() => setIsSizeGuideOpen(false)} sizeGuide={product.sizeGuide} />
         </div>
     );
 };

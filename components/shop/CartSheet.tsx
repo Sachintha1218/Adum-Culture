@@ -20,6 +20,7 @@ export function CartSheet() {
         removeFromCart,
         updateQuantity,
         cartTotal,
+        shippingCharge,
         isCartOpen,
         closeCart,
     } = useCart();
@@ -122,7 +123,7 @@ export function CartSheet() {
                                 <span className="font-medium">{formatCurrency(cartTotal)}</span>
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                Shipping & taxes calculated at checkout.
+                                Taxes included. Discounts and shipping calculated at checkout.
                             </p>
                         </div>
                         <Button

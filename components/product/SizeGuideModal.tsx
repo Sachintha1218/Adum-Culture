@@ -1,15 +1,19 @@
 "use client";
 
+import Image from "next/image";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { SizeGuide } from "@/types";
+import { resolveImageUrl } from "@/lib/sanity-helpers";
 
 interface SizeGuideModalProps {
     isOpen: boolean;
     onClose: () => void;
+    sizeGuide?: SizeGuide;
 }
 
 const sizeData = [
@@ -22,39 +26,53 @@ const sizeData = [
     { int: "3XL", uk: "UK 18", bust: 44, waist: 37.5, hip: 48 },
 ];
 
-export function SizeGuideModal({ isOpen, onClose }: SizeGuideModalProps) {
+export function SizeGuideModal({ isOpen, onClose, sizeGuide }: SizeGuideModalProps) {
+    const imageUrl = sizeGuide?.image ? resolveImageUrl(sizeGuide.image, 800) : null;
+
     return (
         <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
             <DialogContent className="sm:max-w-2xl bg-zinc-950 text-zinc-50 border-zinc-800">
                 <DialogHeader>
                     <DialogTitle className="text-center font-serif text-3xl uppercase tracking-widest mb-6 mt-4">
-                        ADUM CULTURE SIZE GUIDE
+                        {sizeGuide?.name?.toUpperCase() || "ADUM CULTURE SIZE GUIDE"}
                     </DialogTitle>
                 </DialogHeader>
-                <div className="overflow-x-auto pb-4 px-2">
-                    <table className="w-full text-base sm:text-lg text-center border-collapse border-[1px] border-zinc-200 dark:border-zinc-800">
-                        <thead>
-                            <tr className="border-[1px] border-zinc-200 dark:border-zinc-800">
-                                <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Size (INT)</th>
-                                <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Size (UK)</th>
-                                <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Bust</th>
-                                <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Waist</th>
-                                <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Hip</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sizeData.map((row) => (
-                                <tr key={row.int}>
-                                    <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.int}</td>
-                                    <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.uk}</td>
-                                    <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.bust}</td>
-                                    <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.waist}</td>
-                                    <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.hip}</td>
+                {imageUrl ? (
+                    <div className="relative w-full aspect-[4/3] flex items-center justify-center p-4">
+                        <Image
+                            src={imageUrl}
+                            alt={sizeGuide?.name || "Size Guide"}
+                            fill
+                            className="object-contain"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto pb-4 px-2">
+                        <table className="w-full text-base sm:text-lg text-center border-collapse border-[1px] border-zinc-200 dark:border-zinc-800">
+                            <thead>
+                                <tr className="border-[1px] border-zinc-200 dark:border-zinc-800">
+                                    <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Size (INT)</th>
+                                    <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Size (UK)</th>
+                                    <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Bust</th>
+                                    <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Waist</th>
+                                    <th className="py-4 px-2 font-medium tracking-wider uppercase border-[1px] border-zinc-200 dark:border-zinc-800">Hip</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {sizeData.map((row) => (
+                                    <tr key={row.int}>
+                                        <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.int}</td>
+                                        <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.uk}</td>
+                                        <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.bust}</td>
+                                        <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.waist}</td>
+                                        <td className="py-4 px-2 border-[1px] border-zinc-200 dark:border-zinc-800">{row.hip}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );

@@ -45,6 +45,14 @@ export const PRODUCT_BY_SLUG_QUERY = groq`
       hotspot,
       crop
     },
+    "sizeGuide": sizeGuide->{
+      name,
+      image {
+        asset->{url},
+        hotspot,
+        crop
+      }
+    },
     sizes,
     colors,
     newArrival,

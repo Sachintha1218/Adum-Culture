@@ -17,7 +17,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Loader2, Tag, X } from "lucide-react";
 
 export default function CheckoutPage() {
-    const { cartItems, cartTotal, finalTotal, discount, appliedCouponCode, applyDiscount, removeDiscount } = useCart();
+    const { cartItems, cartTotal, shippingCharge, finalTotal, discount, appliedCouponCode, applyDiscount, removeDiscount } = useCart();
     const { user } = useAuth();
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -178,7 +178,9 @@ export default function CheckoutPage() {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">Shipping</span>
-                                <span className="text-green-600">Free</span>
+                                <span className={shippingCharge === 0 ? "text-green-600" : ""}>
+                                    {shippingCharge === 0 ? "Free" : formatCurrency(shippingCharge)}
+                                </span>
                             </div>
 
                             {discount > 0 && (

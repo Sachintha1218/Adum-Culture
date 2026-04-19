@@ -5,6 +5,11 @@ export interface SanityImage {
   crop?: { top: number; bottom: number; left: number; right: number };
 }
 
+export interface SizeGuide {
+  name?: string;
+  image: SanityImage;
+}
+
 // ─── Product ───────────────────────────────────────────────────────────────
 export interface Product {
   // Sanity uses _id; static data uses id — support both
@@ -18,6 +23,7 @@ export interface Product {
   categoryName?: string;
   // images can be Sanity image objects OR plain URL strings (legacy)
   images: (SanityImage | string)[];
+  sizeGuide?: SizeGuide;
   sizes: string[];
   colors: string[];
   newArrival?: boolean;
