@@ -21,6 +21,8 @@ export function CartSheet() {
         updateQuantity,
         cartTotal,
         shippingCharge,
+        discount,
+        finalTotal,
         isCartOpen,
         closeCart,
     } = useCart();
@@ -122,8 +124,24 @@ export function CartSheet() {
                                 <span className="text-muted-foreground">Subtotal</span>
                                 <span className="font-medium">{formatCurrency(cartTotal)}</span>
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                Taxes included. Discounts and shipping calculated at checkout.
+                            <div className="flex justify-between">
+                                <span className="text-muted-foreground">Shipping</span>
+                                <span className={shippingCharge === 0 ? "text-green-600" : ""}>
+                                    {shippingCharge === 0 ? "Free" : formatCurrency(shippingCharge)}
+                                </span>
+                            </div>
+                            {discount > 0 && (
+                                <div className="flex justify-between text-green-600">
+                                    <span>Discount</span>
+                                    <span>-{formatCurrency(discount)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between border-t pt-3 font-bold text-base">
+                                <span>Total</span>
+                                <span>{formatCurrency(finalTotal)}</span>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground pt-1">
+                                Taxes included. Additional shipping info available at checkout.
                             </p>
                         </div>
                         <Button
