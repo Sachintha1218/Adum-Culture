@@ -186,4 +186,20 @@ export const product = defineType({
       of: [{ type: 'string' }],
     }),
   ],
+  preview: {
+    select: {
+      title: 'name',
+      media: 'images.0',
+      sizeStocks: 'sizeStocks',
+    },
+    prepare(selection: any) {
+      const { title, media, sizeStocks } = selection;
+      const totalStock = (sizeStocks || []).reduce((acc: number, curr: any) => acc + (curr.quantity || 0), 0);
+      return {
+        title,
+        media,
+        subtitle: `Stock: ${totalStock} — ${totalStock > 0 ? '✅ IN STOCK' : '❌ OUT OF STOCK'}`,
+      };
+    },
+  },
 });

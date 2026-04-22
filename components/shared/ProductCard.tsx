@@ -58,6 +58,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         {discountPercentage}% OFF
                     </div>
                 )}
+                {(() => {
+                    const totalStock = product.sizeStocks && product.sizeStocks.length > 0
+                        ? product.sizeStocks.reduce((sum, s) => sum + s.quantity, 0)
+                        : (product.stock ?? 0);
+                    
+                    if (totalStock === 0) {
+                        return (
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+                                <span className="bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-black">
+                                    Out of Stock
+                                </span>
+                            </div>
+                        );
+                    }
+                    return null;
+                })()}
             </div>
             <div>
                 <h3 className="text-sm font-medium uppercase tracking-wide text-foreground group-hover:text-primary transition-colors">
