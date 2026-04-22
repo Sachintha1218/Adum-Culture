@@ -10,7 +10,14 @@ export const products: Product[] = [
         originalPrice: 15000,
         category: "dresses",
         images: ["https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=2000&auto=format&fit=crop", "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=2000&auto=format&fit=crop"],
-        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
+        sizes: [
+            { size: "XXS", quantity: 10 },
+            { size: "XS", quantity: 10 },
+            { size: "S", quantity: 10 },
+            { size: "M", quantity: 10 },
+            { size: "L", quantity: 10 },
+            { size: "XL", quantity: 10 }
+        ],
         colors: ["Black", "Red", "Navy"],
         newArrival: true,
         bestSeller: true,
@@ -28,7 +35,13 @@ export const products: Product[] = [
         price: 4500,
         category: "tops",
         images: ["https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=2000&auto=format&fit=crop", "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=2000&auto=format&fit=crop"],
-        sizes: ["XXS", "XS", "S", "M", "L"],
+        sizes: [
+            { size: "XXS", quantity: 12 },
+            { size: "XS", quantity: 12 },
+            { size: "S", quantity: 12 },
+            { size: "M", quantity: 12 },
+            { size: "L", quantity: 12 }
+        ],
         colors: ["White", "Beige"],
         newArrival: true,
         itemCode: "OLS-SS26-WHT",
@@ -45,7 +58,14 @@ export const products: Product[] = [
         price: 6800,
         category: "bottoms",
         images: ["https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=2000&auto=format&fit=crop"],
-        sizes: ["XXS", "XS", "S", "M", "L", "XL"],
+        sizes: [
+            { size: "XXS", quantity: 10 },
+            { size: "XS", quantity: 10 },
+            { size: "S", quantity: 10 },
+            { size: "M", quantity: 10 },
+            { size: "L", quantity: 10 },
+            { size: "XL", quantity: 10 }
+        ],
         colors: ["Black", "Grey"],
         bestSeller: true,
         itemCode: "TTR-AW25-BLK",
@@ -62,7 +82,14 @@ export const products: Product[] = [
         price: 5200,
         category: "dresses",
         images: ["https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=2000&auto=format&fit=crop"],
-        sizes: ["XS", "S", "M", "L", "XL", "XXL"],
+        sizes: [
+            { size: "XS", quantity: 15 },
+            { size: "S", quantity: 15 },
+            { size: "M", quantity: 15 },
+            { size: "L", quantity: 15 },
+            { size: "XL", quantity: 15 },
+            { size: "XXL", quantity: 15 }
+        ],
         colors: ["Floral Print"],
         itemCode: "FSD-SU26-FLR",
         stock: 22,

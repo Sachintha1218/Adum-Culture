@@ -56,59 +56,14 @@ export const product = defineType({
     }),
     defineField({
       name: 'sizes',
-      title: 'Sizes',
-      type: 'array',
-      of: [{ type: 'string' }],
-      options: {
-        list: [
-          { title: 'XXS', value: 'XXS' },
-          { title: 'XS', value: 'XS' },
-          { title: 'S', value: 'S' },
-          { title: 'M', value: 'M' },
-          { title: 'L', value: 'L' },
-          { title: 'XL', value: 'XL' },
-          { title: 'XXL', value: 'XXL' },
-        ],
-      },
-    }),
-    defineField({
-      name: 'sizeGuide',
-      title: 'Size Guide',
-      type: 'reference',
-      to: [{ type: 'sizeGuide' }],
-      description: 'Select a previously uploaded size guide for this product (optional).',
-    }),
-    defineField({
-      name: 'colors',
-      title: 'Colors',
-      type: 'array',
-      of: [{ type: 'string' }],
-    }),
-    defineField({
-      name: 'newArrival',
-      title: 'New Arrival',
-      type: 'boolean',
-      initialValue: false,
-    }),
-    defineField({
-      name: 'bestSeller',
-      title: 'Best Seller',
-      type: 'boolean',
-      initialValue: false,
-    }),
-    defineField({
-      name: 'itemCode',
-      title: 'Item Code',
-      type: 'string',
-    }),
-    defineField({
-      name: 'sizeStocks',
-      title: 'Stock Per Size',
-      description: 'Set stock quantity for each size individually.',
+      title: 'Sizes & Stock',
+      description: 'Add sizes and their respective stock quantities.',
       type: 'array',
       of: [
         {
           type: 'object',
+          name: 'sizeStock',
+          title: 'Size & Stock',
           fields: [
             defineField({
               name: 'size',
@@ -153,6 +108,36 @@ export const product = defineType({
       ],
     }),
     defineField({
+      name: 'sizeGuide',
+      title: 'Size Guide',
+      type: 'reference',
+      to: [{ type: 'sizeGuide' }],
+      description: 'Select a previously uploaded size guide for this product (optional).',
+    }),
+    defineField({
+      name: 'colors',
+      title: 'Colors',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'newArrival',
+      title: 'New Arrival',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'bestSeller',
+      title: 'Best Seller',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'itemCode',
+      title: 'Item Code',
+      type: 'string',
+    }),
+    defineField({
       name: 'modelDetails',
       title: 'Model Details',
       type: 'string',
@@ -161,27 +146,23 @@ export const product = defineType({
     defineField({
       name: 'material',
       title: 'Material',
-      description: 'e.g. "100% Premium Cotton" or "80% Cotton, 20% Polyester"',
       type: 'string',
     }),
     defineField({
       name: 'careInstructions',
       title: 'Care Instructions',
-      description: 'Add each care instruction as a separate item — they will appear as bullet points.',
       type: 'array',
       of: [{ type: 'string' }],
     }),
     defineField({
       name: 'styleGuide',
       title: 'Style Guide',
-      description: 'Styling tips for this product. Each item becomes a bullet point.',
       type: 'array',
       of: [{ type: 'string' }],
     }),
     defineField({
       name: 'shippingInfo',
       title: 'Shipping & Returns',
-      description: 'Shipping and returns info. Each item becomes a bullet point.',
       type: 'array',
       of: [{ type: 'string' }],
     }),
@@ -190,11 +171,11 @@ export const product = defineType({
     select: {
       title: 'name',
       media: 'images.0',
-      sizeStocks: 'sizeStocks',
+      sizes: 'sizes',
     },
     prepare(selection: any) {
-      const { title, media, sizeStocks } = selection;
-      const totalStock = (sizeStocks || []).reduce((acc: number, curr: any) => acc + (curr.quantity || 0), 0);
+      const { title, media, sizes } = selection;
+      const totalStock = (sizes || []).reduce((acc: number, curr: any) => acc + (curr.quantity || 0), 0);
       return {
         title,
         media,

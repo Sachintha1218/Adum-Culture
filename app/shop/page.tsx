@@ -113,7 +113,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     if (searchParams.sizes) {
         const sizesArr = searchParams.sizes.split(",");
         filteredProducts = filteredProducts.filter((p) =>
-            p.sizes && p.sizes.some((size) => sizesArr.includes(size))
+            p.sizes && p.sizes.some((s) => sizesArr.includes(s.size))
         );
     }
 

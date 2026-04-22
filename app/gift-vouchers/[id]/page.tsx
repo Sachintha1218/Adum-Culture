@@ -46,7 +46,7 @@ export default function VoucherBuyingPage({ params }: { params: { id: string } }
             category: "Gift Vouchers",
             description: "Digital Gift Voucher",
             images: [voucher.image],
-            sizes: ["Digital"],
+            sizes: [{ size: "Digital", quantity: 999 }],
             colors: [],
             slug: `voucher-${voucher.id}`,
         };

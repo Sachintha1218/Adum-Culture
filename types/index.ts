@@ -29,15 +29,14 @@ export interface Product {
   // images can be Sanity image objects OR plain URL strings (legacy)
   images: (SanityImage | string)[];
   sizeGuide?: SizeGuide;
-  sizes: string[];
+  sizes: SizeStock[];
   colors: string[];
   newArrival?: boolean;
   bestSeller?: boolean;
   slug: string | { current: string };
   itemCode?: string;
-  /** @deprecated Use sizeStocks for per-size stock. Kept for legacy compatibility. */
+  /** @deprecated Use sizes for per-size stock. Kept for legacy compatibility. */
   stock?: number;
-  sizeStocks?: SizeStock[];
   modelDetails?: string;
   material?: string;
   careInstructions?: string | string[];

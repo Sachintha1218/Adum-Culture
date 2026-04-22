@@ -42,22 +42,13 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
     const [isAdding, setIsAdding] = useState(false);
 
-    // ─── Per-size stock helpers ─────────────────────────────────────────────
-    /**
-     * Returns the stock quantity for a given size.
-     * Returns Infinity if sizeStocks not set (backwards-compatible — all sizes selectable).
-     */
     const getSizeStock = (size: string): number => {
-        if (!product.sizeStocks || product.sizeStocks.length === 0) return Infinity;
-        const entry = product.sizeStocks.find((s) => s.size === size);
+        const entry = product.sizes.find((s) => s.size === size);
         return entry?.quantity ?? 0;
     };
 
-    /** Total stock across all sizes (falls back to legacy stock field) */
-    const totalStock: number =
-        product.sizeStocks && product.sizeStocks.length > 0
-            ? product.sizeStocks.reduce((sum, s) => sum + s.quantity, 0)
-            : (product.stock ?? 0);
+    /** Total stock across all sizes */
+    const totalStock: number = (product.sizes || []).reduce((sum, s) => sum + (s?.quantity || 0), 0);
 
     const selectedSizeStock = selectedSize ? getSizeStock(selectedSize) : null;
 
@@ -66,10 +57,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         if (type === "dec" && quantity > 1) {
             setQuantity(quantity - 1);
         } else if (type === "inc") {
-            const maxQty =
-                selectedSizeStock !== null && selectedSizeStock !== Infinity
-                    ? selectedSizeStock
-                    : 999;
+            const maxQty = selectedSizeStock !== null ? selectedSizeStock : 999;
             if (quantity < maxQty) setQuantity(quantity + 1);
         }
     };
@@ -183,8 +171,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    {(product.sizes ?? []).map((size) => {
-                        const sizeQty = getSizeStock(size);
+                    {(product.sizes || []).filter(Boolean).map((entry) => {
+                        const size = entry.size;
+                        const sizeQty = entry.quantity;
                         const isOutOfStock = sizeQty === 0;
                         const isSelected = selectedSize === size;
 

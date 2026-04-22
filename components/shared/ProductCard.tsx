@@ -59,9 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     </div>
                 )}
                 {(() => {
-                    const totalStock = product.sizeStocks && product.sizeStocks.length > 0
-                        ? product.sizeStocks.reduce((sum, s) => sum + s.quantity, 0)
-                        : (product.stock ?? 0);
+                    const totalStock = (product.sizes || []).reduce((sum, s) => sum + (s?.quantity || 0), 0);
                     
                     if (totalStock === 0) {
                         return (

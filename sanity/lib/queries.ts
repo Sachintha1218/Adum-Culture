@@ -16,12 +16,11 @@ export const ALL_PRODUCTS_QUERY = groq`
       hotspot,
       crop
     },
-    sizes,
+    sizes[]{ size, quantity },
     colors,
     newArrival,
     bestSeller,
     itemCode,
-    sizeStocks[]{ size, quantity },
     modelDetails,
     material,
     careInstructions,
@@ -53,12 +52,11 @@ export const PRODUCT_BY_SLUG_QUERY = groq`
         crop
       }
     },
-    sizes,
+    sizes[]{ size, quantity },
     colors,
     newArrival,
     bestSeller,
     itemCode,
-    sizeStocks[]{ size, quantity },
     modelDetails,
     material,
     careInstructions,
@@ -82,12 +80,11 @@ export const BEST_SELLERS_QUERY = groq`
       hotspot,
       crop
     },
-    sizes,
+    sizes[]{ size, quantity },
     colors,
     newArrival,
     bestSeller,
     itemCode,
-    sizeStocks[]{ size, quantity }
   }
 `
 
@@ -106,12 +103,11 @@ export const NEW_ARRIVALS_QUERY = groq`
       hotspot,
       crop
     },
-    sizes,
+    sizes[]{ size, quantity },
     colors,
     newArrival,
     bestSeller,
     itemCode,
-    sizeStocks[]{ size, quantity }
   }
 `
 
@@ -129,12 +125,11 @@ export const RELATED_PRODUCTS_QUERY = groq`
       hotspot,
       crop
     },
-    sizes,
+    sizes[]{ size, quantity },
     colors,
     newArrival,
     bestSeller,
     itemCode,
-    sizeStocks[]{ size, quantity }
   }
 `
 

@@ -43,12 +43,12 @@ export async function POST(req: NextRequest) {
     const sizeKey = rawSize(selectedSize);
 
     try {
-      // Fetch current sizeStocks for this product
+      // Fetch current sizes for this product
       const product = await writeClient.fetch<{
         _id: string;
-        sizeStocks?: { _key: string; size: string; quantity: number }[];
+        sizes?: { _key: string; size: string; quantity: number }[];
       }>(
-        `*[_type == "product" && _id == $id][0]{ _id, sizeStocks[]{ _key, size, quantity } }`,
+        `*[_type == "product" && _id == $id][0]{ _id, sizes[]{ _key, size, quantity } }`,
         { id: productId }
       );
 
@@ -57,11 +57,11 @@ export async function POST(req: NextRequest) {
         continue;
       }
 
-      const stocks = product.sizeStocks ?? [];
+      const stocks = product.sizes ?? [];
       const entry = stocks.find((s) => s.size === sizeKey);
 
       if (!entry) {
-        // Size doesn't exist in sizeStocks — nothing to deduct
+        // Size doesn't exist in sizes — nothing to deduct
         errors.push(`Size "${sizeKey}" not found in stock for product ${productId}.`);
         continue;
       }
@@ -71,14 +71,14 @@ export async function POST(req: NextRequest) {
       // Patch the specific array item by its _key
       await writeClient
         .patch(productId)
-        .dec({ [`sizeStocks[_key=="${entry._key}"].quantity`]: quantity })
+        .dec({ [`sizes[_key=="${entry._key}"].quantity`]: quantity })
         .commit();
 
       // Ensure quantity never goes below 0 (double safety)
       if (newQuantity === 0) {
         await writeClient
           .patch(productId)
-          .set({ [`sizeStocks[_key=="${entry._key}"].quantity`]: 0 })
+          .set({ [`sizes[_key=="${entry._key}"].quantity`]: 0 })
           .commit();
       }
     } catch (err) {
