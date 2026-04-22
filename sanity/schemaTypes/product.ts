@@ -102,11 +102,55 @@ export const product = defineType({
       type: 'string',
     }),
     defineField({
-      name: 'stock',
-      title: 'Stock Quantity',
-      type: 'number',
-      initialValue: 0,
-      validation: (Rule) => Rule.min(0),
+      name: 'sizeStocks',
+      title: 'Stock Per Size',
+      description: 'Set stock quantity for each size individually.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'size',
+              title: 'Size',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'XXS', value: 'XXS' },
+                  { title: 'XS', value: 'XS' },
+                  { title: 'S', value: 'S' },
+                  { title: 'M', value: 'M' },
+                  { title: 'L', value: 'L' },
+                  { title: 'XL', value: 'XL' },
+                  { title: 'XXL', value: 'XXL' },
+                ],
+              },
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'quantity',
+              title: 'Quantity',
+              type: 'number',
+              initialValue: 0,
+              validation: (Rule) => Rule.required().min(0),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'size',
+              subtitle: 'quantity',
+            },
+            prepare(selection: Record<string, unknown>) {
+              const title = selection.title as string | undefined;
+              const subtitle = selection.subtitle as number | undefined;
+              return {
+                title: `Size: ${title ?? ''}`,
+                subtitle: `Qty: ${subtitle ?? 0}`,
+              };
+            },
+          },
+        },
+      ],
     }),
     defineField({
       name: 'modelDetails',

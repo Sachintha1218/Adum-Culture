@@ -5,6 +5,11 @@ export interface SanityImage {
   crop?: { top: number; bottom: number; left: number; right: number };
 }
 
+export interface SizeStock {
+  size: string;
+  quantity: number;
+}
+
 export interface SizeGuide {
   name?: string;
   image: SanityImage;
@@ -30,7 +35,9 @@ export interface Product {
   bestSeller?: boolean;
   slug: string | { current: string };
   itemCode?: string;
+  /** @deprecated Use sizeStocks for per-size stock. Kept for legacy compatibility. */
   stock?: number;
+  sizeStocks?: SizeStock[];
   modelDetails?: string;
   material?: string;
   careInstructions?: string | string[];

@@ -21,7 +21,7 @@ export const ALL_PRODUCTS_QUERY = groq`
     newArrival,
     bestSeller,
     itemCode,
-    stock,
+    sizeStocks[]{ size, quantity },
     modelDetails,
     material,
     careInstructions,
@@ -58,7 +58,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`
     newArrival,
     bestSeller,
     itemCode,
-    stock,
+    sizeStocks[]{ size, quantity },
     modelDetails,
     material,
     careInstructions,
@@ -87,7 +87,7 @@ export const BEST_SELLERS_QUERY = groq`
     newArrival,
     bestSeller,
     itemCode,
-    stock
+    sizeStocks[]{ size, quantity }
   }
 `
 
@@ -111,7 +111,7 @@ export const NEW_ARRIVALS_QUERY = groq`
     newArrival,
     bestSeller,
     itemCode,
-    stock
+    sizeStocks[]{ size, quantity }
   }
 `
 
@@ -134,7 +134,7 @@ export const RELATED_PRODUCTS_QUERY = groq`
     newArrival,
     bestSeller,
     itemCode,
-    stock
+    sizeStocks[]{ size, quantity }
   }
 `
 

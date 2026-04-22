@@ -90,10 +90,28 @@ export default function PaymentPage() {
 
         setIsProcessing(true);
 
-        // Simulate API call to process payment
+        // Simulate payment processing
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        // Note: In a real app, you"d update the gift voucher balance here in the backend
+        // ─── Deduct stock in Sanity after confirmed payment ───────────────
+        try {
+            const stockItems = cartItems.map((item) => ({
+                productId: item._id ?? item.id ?? "",
+                selectedSize: item.selectedSize,
+                quantity: item.quantity,
+            }));
+
+            await fetch("/api/update-stock", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ items: stockItems }),
+            });
+        } catch {
+            // Non-blocking — order confirmation proceeds even if stock update fails
+            console.error("Stock update failed after payment confirmation.");
+        }
+
+        // Note: In a real app, you'd update the gift voucher balance here in the backend
 
         if (appliedCouponCode && user) {
             recordUsedCoupon(appliedCouponCode);
@@ -102,6 +120,7 @@ export default function PaymentPage() {
         clearCart();
         router.push("/checkout/success");
     };
+
 
     return (
         <Container className="pt-24 pb-12 md:pt-28 md:py-20">

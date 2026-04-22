@@ -84,10 +84,7 @@ export default function CheckoutPage() {
         e.preventDefault();
         setIsProcessing(true);
 
-        // Simulate processing / checking stock etc before payment page
-        await new Promise((resolve) => setTimeout(resolve, 800));
-
-        // Push user to payment page
+        // Route to payment page — stock is deducted after confirmed payment
         router.push("/checkout/payment");
     };
 
