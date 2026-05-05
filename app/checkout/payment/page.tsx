@@ -86,84 +86,6 @@ export default function PaymentPage() {
         );
     }
 
-<<<<<<< Updated upstream
-    const remainingBalance = Math.max(0, finalTotal - (appliedVoucher ? appliedVoucher.balance : 0));
-
-    const handleApplyVoucher = () => {
-        setVoucherError("");
-        setVoucherSuccess("");
-
-        if (!voucherInput.trim()) {
-            setVoucherError("Please enter a voucher code.");
-            return;
-        }
-
-        const voucher = giftVouchers.find((v) => v.code.toLowerCase() === voucherInput.toLowerCase());
-
-        if (!voucher) {
-            setVoucherError("Invalid gift voucher code.");
-            return;
-        }
-
-        if (voucher.balance <= 0) {
-            setVoucherError("This gift voucher has a 0 balance.");
-            return;
-        }
-
-        setAppliedVoucher(voucher);
-        setVoucherSuccess(`Voucher ${voucher.code} applied! Covered: ${formatCurrency(Math.min(finalTotal, voucher.balance))}`);
-        setVoucherInput("");
-        // If the voucher covers everything, we don"t need a payment method
-        if (finalTotal - voucher.balance <= 0) {
-            setPaymentMethod(null);
-        }
-    };
-
-    const handleRemoveVoucher = () => {
-        setAppliedVoucher(null);
-        setVoucherSuccess("");
-        setVoucherError("");
-    };
-
-    const handlePayment = async () => {
-        if (remainingBalance > 0 && !paymentMethod) {
-            alert("Please select a payment method for the remaining balance.");
-            return;
-        }
-
-        setIsProcessing(true);
-
-        // Simulate payment processing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        // ─── Deduct stock in Sanity after confirmed payment ───────────────
-        try {
-            const stockItems = cartItems.map((item) => ({
-                productId: item._id ?? item.id ?? "",
-                selectedSize: item.selectedSize,
-                quantity: item.quantity,
-            }));
-
-            await fetch("/api/update-stock", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ items: stockItems }),
-            });
-        } catch {
-            // Non-blocking — order confirmation proceeds even if stock update fails
-            console.error("Stock update failed after payment confirmation.");
-        }
-
-        // Note: In a real app, you'd update the gift voucher balance here in the backend
-
-        if (appliedCouponCode && user) {
-            recordUsedCoupon(appliedCouponCode);
-        }
-
-        clearCart();
-        router.push("/checkout/success");
-    };
-=======
     if (error && !paymentData) {
         return (
             <Container className="flex flex-col items-center justify-center py-32 text-center gap-6">
@@ -173,7 +95,6 @@ export default function PaymentPage() {
             </Container>
         );
     }
->>>>>>> Stashed changes
 
 
     return (

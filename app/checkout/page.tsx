@@ -80,10 +80,6 @@ export default function CheckoutPage() {
         setIsProcessing(true);
         setError("");
 
-<<<<<<< Updated upstream
-        // Route to payment page — stock is deducted after confirmed payment
-        router.push("/checkout/payment");
-=======
         const firstName = firstNameRef.current?.value ?? "";
         const lastName = lastNameRef.current?.value ?? "";
         const customerName = `${firstName} ${lastName}`.trim();
@@ -124,7 +120,6 @@ export default function CheckoutPage() {
             setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
             setIsProcessing(false);
         }
->>>>>>> Stashed changes
     };
 
     return (
