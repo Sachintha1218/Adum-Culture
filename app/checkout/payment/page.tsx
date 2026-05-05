@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { apiFetch } from "@/context/AuthContext";
@@ -19,6 +19,18 @@ declare global {
 }
 
 export default function PaymentPage() {
+    return (
+        <Suspense fallback={
+            <Container className="flex items-center justify-center py-40">
+                <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+            </Container>
+        }>
+            <PaymentContent />
+        </Suspense>
+    );
+}
+
+function PaymentContent() {
     const { finalTotal, clearCart } = useCart();
     const router = useRouter();
     const searchParams = useSearchParams();
