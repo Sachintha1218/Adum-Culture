@@ -64,7 +64,11 @@ function PaymentContent() {
         script.id = "onepay-script";
         script.src = "https://storage.googleapis.com/onepayjs/onepayv2.js";
         script.async = true;
-        script.onload = () => setScriptLoaded(true);
+        script.onload = () => {
+            // SDK listens for DOMContentLoaded to init — dispatch manually since page is already loaded
+            document.dispatchEvent(new Event("DOMContentLoaded"));
+            setScriptLoaded(true);
+        };
         document.body.appendChild(script);
 
         return () => {
