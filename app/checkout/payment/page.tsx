@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/utils";
 import { Loader2, AlertCircle } from "lucide-react";
-import Script from "next/script";
 import Link from "next/link";
 
 declare global {
@@ -47,19 +46,32 @@ function PaymentContent() {
 
         apiFetch("/api/payment/initiate", { method: "POST", body: JSON.stringify({ orderId }) })
             .then((res) => {
+                window.onePayData = res.data;   // set BEFORE script loads
                 setPaymentData(res.data);
-                window.onePayData = res.data;
             })
             .catch((err) => setError(err.message ?? "Failed to load payment. Please try again."))
             .finally(() => setIsLoading(false));
     }, [orderId]);
 
-    // Mount OnePay widget once both data and script are ready
+    // Inject OnePay script dynamically after data is set — guarantees SDK reads window.onePayData on init
     useEffect(() => {
-        if (!paymentData || !scriptLoaded) return;
-        // OnePay SDK reads window.onePayData and mounts into #onepay-btn
-        window.onePayData = paymentData;
-    }, [paymentData, scriptLoaded]);
+        if (!paymentData) return;
+
+        const existing = document.getElementById("onepay-script");
+        if (existing) return; // already injected
+
+        const script = document.createElement("script");
+        script.id = "onepay-script";
+        script.src = "https://storage.googleapis.com/onepayjs/onepayv2.js";
+        script.async = true;
+        script.onload = () => setScriptLoaded(true);
+        document.body.appendChild(script);
+
+        return () => {
+            const s = document.getElementById("onepay-script");
+            if (s) s.remove();
+        };
+    }, [paymentData]);
 
     const handlePaySuccess = useCallback(
         async (e: Event) => {
@@ -108,59 +120,47 @@ function PaymentContent() {
         );
     }
 
-
     return (
-        <>
-            {/* Only load script after payment data is ready so SDK finds window.onePayData on init */}
-            {paymentData && (
-                <Script
-                    src="https://storage.googleapis.com/onepayjs/onepayv2.js"
-                    strategy="afterInteractive"
-                    onLoad={() => setScriptLoaded(true)}
-                />
-            )}
+        <Container className="pt-24 pb-12 md:pt-28 md:py-20">
+            <h1 className="mb-12 text-3xl font-bold uppercase tracking-widest md:text-4xl text-center">Payment</h1>
 
-            <Container className="pt-24 pb-12 md:pt-28 md:py-20">
-                <h1 className="mb-12 text-3xl font-bold uppercase tracking-widest md:text-4xl text-center">Payment</h1>
-
-                <div className="max-w-lg mx-auto">
-                    <div className="rounded-lg border p-6 md:p-8 space-y-8">
-                        <div className="space-y-3 text-sm">
-                            <div className="flex justify-between font-bold text-xl">
-                                <span>Amount to Pay</span>
-                                <span>{formatCurrency((paymentData?.amount as number) ?? finalTotal)}</span>
-                            </div>
-                            <Separator />
+            <div className="max-w-lg mx-auto">
+                <div className="rounded-lg border p-6 md:p-8 space-y-8">
+                    <div className="space-y-3 text-sm">
+                        <div className="flex justify-between font-bold text-xl">
+                            <span>Amount to Pay</span>
+                            <span>{formatCurrency((paymentData?.amount as number) ?? finalTotal)}</span>
                         </div>
-
-                        {error && (
-                            <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md flex items-center gap-2">
-                                <AlertCircle className="h-4 w-4 shrink-0" /> {error}
-                            </div>
-                        )}
-
-                        {/* OnePay mounts its button here */}
-                        <div id="onepay-btn" className="min-h-[60px] flex items-center justify-center" />
-                        <div id="iframe-container" />
-
-                        {!scriptLoaded && (
-                            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                                <Loader2 className="h-4 w-4 animate-spin" /> Loading secure payment...
-                            </div>
-                        )}
-
-                        <p className="text-xs text-center text-muted-foreground">
-                            Payments are processed securely via OnePay. Your card details are never stored.
-                        </p>
-
-                        {error && (
-                            <Button asChild variant="outline" className="w-full">
-                                <Link href="/checkout">Back to Checkout</Link>
-                            </Button>
-                        )}
+                        <Separator />
                     </div>
+
+                    {error && (
+                        <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md flex items-center gap-2">
+                            <AlertCircle className="h-4 w-4 shrink-0" /> {error}
+                        </div>
+                    )}
+
+                    {/* OnePay mounts its button here */}
+                    <div id="onepay-btn" className="min-h-[60px] flex items-center justify-center" />
+                    <div id="iframe-container" />
+
+                    {!scriptLoaded && (
+                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                            <Loader2 className="h-4 w-4 animate-spin" /> Loading secure payment...
+                        </div>
+                    )}
+
+                    <p className="text-xs text-center text-muted-foreground">
+                        Payments are processed securely via OnePay. Your card details are never stored.
+                    </p>
+
+                    {error && (
+                        <Button asChild variant="outline" className="w-full">
+                            <Link href="/checkout">Back to Checkout</Link>
+                        </Button>
+                    )}
                 </div>
-            </Container>
-        </>
+            </div>
+        </Container>
     );
 }
