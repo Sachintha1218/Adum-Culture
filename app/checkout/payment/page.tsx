@@ -111,11 +111,14 @@ function PaymentContent() {
 
     return (
         <>
-            <Script
-                src="https://storage.googleapis.com/onepayjs/onepayv2.js"
-                strategy="afterInteractive"
-                onLoad={() => setScriptLoaded(true)}
-            />
+            {/* Only load script after payment data is ready so SDK finds window.onePayData on init */}
+            {paymentData && (
+                <Script
+                    src="https://storage.googleapis.com/onepayjs/onepayv2.js"
+                    strategy="afterInteractive"
+                    onLoad={() => setScriptLoaded(true)}
+                />
+            )}
 
             <Container className="pt-24 pb-12 md:pt-28 md:py-20">
                 <h1 className="mb-12 text-3xl font-bold uppercase tracking-widest md:text-4xl text-center">Payment</h1>
