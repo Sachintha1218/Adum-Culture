@@ -290,7 +290,7 @@ export default function AccountDashboard() {
                     {otpStep === "initial" && (
                         <>
                             <p className="text-sm text-muted-foreground">
-                                We'll send a 6-digit one-time code to your registered email to verify your identity before resetting your password.
+                                We&apos;ll send a 6-digit one-time code to your registered email to verify your identity before resetting your password.
                             </p>
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1"><Mail className="h-4 w-4" /> {user?.email}</span>

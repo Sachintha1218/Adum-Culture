@@ -60,7 +60,7 @@ export default function CheckoutPage() {
             applyDiscount(res.data.code, res.data.discountAmount);
             setCouponSuccess(`${res.data.code} applied! You save ${formatCurrency(res.data.discountAmount)}.`);
             setCouponInput("");
-        } catch (err) {
+        } catch {
             // Fallback: validate client-side against known codes
             const { coupons } = await import("@/data/coupons");
             const coupon = coupons.find((c) => c.code.toLowerCase() === couponInput.toLowerCase());

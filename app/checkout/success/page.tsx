@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, Loader2 } from "lucide-react";
@@ -10,6 +10,18 @@ import { apiFetch, type Order } from "@/context/AuthContext";
 import { formatCurrency } from "@/lib/utils";
 
 export default function OrderSuccessPage() {
+    return (
+        <Suspense fallback={
+            <Container className="flex items-center justify-center py-40">
+                <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+            </Container>
+        }>
+            <OrderSuccessContent />
+        </Suspense>
+    );
+}
+
+function OrderSuccessContent() {
     const searchParams = useSearchParams();
     const orderId = searchParams.get("orderId");
     const [order, setOrder] = useState<Order | null>(null);
