@@ -1,41 +1,24 @@
 import Container from "@/components/shared/Container";
 import GalleryGrid from "@/components/home/GalleryGrid";
-import { freshClient } from "@/sanity/lib/client";
-import { GALLERY_IMAGES_QUERY, ALL_PRODUCTS_QUERY } from "@/sanity/lib/queries";
-import { resolveImageUrl } from "@/lib/sanity-helpers";
+import { getGalleryImages, getAllProducts } from "@/lib/admin-api";
 
 const Gallery = async () => {
     let galleryImages: { src: string; alt: string; index: number }[] = [];
 
     try {
-        // Try best-seller images first
-        const bestSellers = await freshClient.fetch(GALLERY_IMAGES_QUERY);
-        if (bestSellers?.length > 0) {
-            galleryImages = bestSellers
-                .flatMap((product: { name: string; slug: string; images: unknown[] }) =>
-                    (product.images ?? []).slice(0, 1).map((img: unknown) => ({
-                        src: resolveImageUrl(img as Parameters<typeof resolveImageUrl>[0], 800),
+        let products = await getGalleryImages(7);
+        if (!products?.length) products = (await getAllProducts()).slice(0, 7);
+
+        if (products?.length > 0) {
+            galleryImages = products
+                .flatMap((product: { name: string; images: string[] }) =>
+                    (product.images ?? []).slice(0, 1).map((img: string) => ({
+                        src: img,
                         alt: product.name,
                     }))
                 )
                 .slice(0, 7)
                 .map((img: { src: string; alt: string }, i: number) => ({ ...img, index: i }));
-        }
-
-        // Fall back to any products if no best sellers
-        if (galleryImages.length === 0) {
-            const allProducts = await freshClient.fetch(ALL_PRODUCTS_QUERY);
-            if (allProducts?.length > 0) {
-                galleryImages = allProducts
-                    .flatMap((product: { name: string; slug: string; images: unknown[] }) =>
-                        (product.images ?? []).slice(0, 1).map((img: unknown) => ({
-                            src: resolveImageUrl(img as Parameters<typeof resolveImageUrl>[0], 800),
-                            alt: product.name,
-                        }))
-                    )
-                    .slice(0, 7)
-                    .map((img: { src: string; alt: string }, i: number) => ({ ...img, index: i }));
-            }
         }
     } catch {
         // fall through

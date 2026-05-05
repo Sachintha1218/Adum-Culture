@@ -12,8 +12,7 @@ import Container from "@/components/shared/Container";
 import ProductCard from "@/components/shared/ProductCard";
 import { FilterSidebar } from "@/components/shop/FilterSidebar";
 import { SortSelect } from "@/components/shop/SortSelect";
-import { freshClient } from "@/sanity/lib/client";
-import { ALL_PRODUCTS_QUERY, ALL_CATEGORIES_QUERY } from "@/sanity/lib/queries";
+import { getAllProducts, getAllCollections } from "@/lib/admin-api";
 import { products as fallbackProducts } from "@/data/products";
 import { categories as fallbackCategories } from "@/data/categories";
 import { Button } from "@/components/ui/button";
@@ -39,15 +38,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     let allCategories: Category[] = [];
 
     try {
-        const sanityProducts = await freshClient.fetch(ALL_PRODUCTS_QUERY);
-        allProducts = sanityProducts?.length > 0 ? sanityProducts : fallbackProducts;
+        const adminProducts = await getAllProducts();
+        allProducts = adminProducts?.length > 0 ? adminProducts : fallbackProducts;
     } catch {
         allProducts = fallbackProducts;
     }
 
     try {
-        const sanityCategories = await freshClient.fetch(ALL_CATEGORIES_QUERY);
-        allCategories = sanityCategories?.length > 0 ? sanityCategories : fallbackCategories;
+        const adminCategories = await getAllCollections();
+        allCategories = adminCategories?.length > 0 ? adminCategories : fallbackCategories;
     } catch {
         allCategories = fallbackCategories;
     }

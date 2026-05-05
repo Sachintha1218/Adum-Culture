@@ -6,8 +6,7 @@ import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
-import { freshClient } from "@/sanity/lib/client";
-import { ALL_CATEGORIES_QUERY } from "@/sanity/lib/queries";
+import { getAllCollections } from "@/lib/admin-api";
 import { Category } from "@/types";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
@@ -80,7 +79,7 @@ export default async function RootLayout({
 }>) {
   let shopCategories: Category[] = [];
   try {
-    const fetched = await freshClient.fetch(ALL_CATEGORIES_QUERY);
+    const fetched = await getAllCollections();
     if (fetched?.length > 0) shopCategories = fetched;
   } catch {
     // fallback already set

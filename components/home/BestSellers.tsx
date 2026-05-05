@@ -2,21 +2,18 @@ import Link from "next/link";
 import Container from "@/components/shared/Container";
 import ProductCard from "@/components/shared/ProductCard";
 import { Button } from "@/components/ui/button";
-import { freshClient } from "@/sanity/lib/client";
-import { BEST_SELLERS_QUERY, ALL_PRODUCTS_QUERY } from "@/sanity/lib/queries";
+import { getBestSellers, getAllProducts } from "@/lib/admin-api";
 import { Product } from "@/types";
 
 const BestSellers = async () => {
     let displayProducts: Product[] = [];
 
     try {
-        // Try best sellers first
-        const bestSellers = await freshClient.fetch(BEST_SELLERS_QUERY);
+        const bestSellers = await getBestSellers(4);
         if (bestSellers?.length > 0) {
             displayProducts = bestSellers;
         } else {
-            // No best sellers marked — show latest 4 Sanity products instead
-            const all = await freshClient.fetch(ALL_PRODUCTS_QUERY);
+            const all = await getAllProducts();
             displayProducts = all?.slice(0, 4) ?? [];
         }
     } catch {

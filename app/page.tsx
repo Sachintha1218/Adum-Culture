@@ -5,21 +5,9 @@ import Gallery from "@/components/home/Gallery";
 import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { freshClient } from "@/sanity/lib/client";
-import { HERO_SLIDES_QUERY } from "@/sanity/lib/queries";
-import { resolveImageUrl } from "@/lib/sanity-helpers";
-import { SanityImage } from "@/types";
+import { getHeroSlides } from "@/lib/admin-api";
 
-// Always fetch fresh data from Sanity — no stale cache
-export const revalidate = 0;
-
-interface SanityHeroSlide {
-  _id: string;
-  order: number;
-  alt: string;
-  desktopImage: SanityImage;
-  mobileImage: SanityImage;
-}
+export const revalidate = 60;
 
 export interface HeroSlide {
   id: string;
@@ -32,15 +20,13 @@ export default async function Home() {
   let heroSlides: HeroSlide[] = [];
 
   try {
-    const raw: SanityHeroSlide[] = await freshClient.fetch(HERO_SLIDES_QUERY);
+    const raw = await getHeroSlides();
     if (raw?.length > 0) {
-      heroSlides = raw.map((slide) => ({
+      heroSlides = raw.map((slide: { _id: string; alt: string; desktopImage: string; mobileImage: string }) => ({
         id: slide._id,
         alt: slide.alt,
-        // Desktop: wide crop, 1920px wide
-        desktopSrc: resolveImageUrl(slide.desktopImage, 1920),
-        // Mobile: portrait crop, 828px wide (iPhone retina)
-        mobileSrc: resolveImageUrl(slide.mobileImage, 828),
+        desktopSrc: slide.desktopImage,
+        mobileSrc: slide.mobileImage,
       }));
     }
   } catch {

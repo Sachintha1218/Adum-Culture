@@ -4,78 +4,51 @@ import Container from "@/components/shared/Container";
 import ProductGallery from "@/components/product/ProductGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import ProductCard from "@/components/shared/ProductCard";
-import { freshClient } from "@/sanity/lib/client";
-import {
-    ALL_PRODUCTS_QUERY,
-    PRODUCT_BY_SLUG_QUERY,
-    ALL_PRODUCT_SLUGS_QUERY,
-    RELATED_PRODUCTS_QUERY,
-} from "@/sanity/lib/queries";
+import { getProductBySlug, getAllProductSlugs, getRelatedProducts } from "@/lib/admin-api";
 import { products as fallbackProducts } from "@/data/products";
 import { Product } from "@/types";
-import { resolveSlug, resolveImageUrl } from "@/lib/sanity-helpers";
+import { resolveSlug } from "@/lib/sanity-helpers";
 
 export const revalidate = 60;
 export const dynamicParams = true;
 
 interface ProductPageProps {
-    params: {
-        slug: string;
-    };
+    params: { slug: string };
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
     let product: Product | null = null;
-
     try {
-        product = await freshClient.fetch(PRODUCT_BY_SLUG_QUERY, { slug: params.slug });
+        product = await getProductBySlug(params.slug);
     } catch {}
 
     if (!product) {
-        const staticProduct = fallbackProducts.find((p) => resolveSlug(p.slug) === params.slug);
+        const staticProduct = fallbackProducts.find(p => resolveSlug(p.slug) === params.slug);
         if (staticProduct) product = staticProduct as Product;
     }
 
     if (!product) return { title: "Product Not Found" };
 
-    const imageUrl = resolveImageUrl(product.images?.[0], 1200);
+    const imageUrl = typeof product.images?.[0] === 'string' ? product.images[0] : '/placeholder.jpg';
     const rawDesc = Array.isArray(product.description)
         ? product.description.join(" ")
         : (product.description ?? "");
-    const description = rawDesc
-        ? rawDesc.slice(0, 160)
-        : `Shop ${product.name} at Adum Culture. Beyond the fabrics.`;
+    const description = rawDesc ? rawDesc.slice(0, 160) : `Shop ${product.name} at Adum Culture.`;
 
     return {
         title: `${product.name} — Adum Culture`,
         description,
-        openGraph: {
-            title: `${product.name} | Adum Culture`,
-            description,
-            images: [{ url: imageUrl, alt: product.name }],
-            type: "website",
-        },
-        twitter: {
-            card: "summary_large_image",
-            title: `${product.name} | Adum Culture`,
-            description,
-            images: [imageUrl],
-        },
+        openGraph: { title: `${product.name} | Adum Culture`, description, images: [{ url: imageUrl, alt: product.name }], type: "website" },
+        twitter: { card: "summary_large_image", title: `${product.name} | Adum Culture`, description, images: [imageUrl] },
     };
 }
 
 export async function generateStaticParams() {
     try {
-        const slugs = await freshClient.fetch(ALL_PRODUCT_SLUGS_QUERY);
-        if (slugs?.length > 0) {
-            return slugs.map((item: { slug: string }) => ({ slug: item.slug }));
-        }
-    } catch {
-        // Fall back to static data slugs
-    }
-    return fallbackProducts.map((product) => ({
-        slug: resolveSlug(product.slug),
-    }));
+        const slugs = await getAllProductSlugs();
+        if (slugs?.length > 0) return slugs.map((item: { slug: string }) => ({ slug: item.slug }));
+    } catch {}
+    return fallbackProducts.map(product => ({ slug: resolveSlug(product.slug) }));
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -83,65 +56,39 @@ export default async function ProductPage({ params }: ProductPageProps) {
     let relatedProducts: Product[] = [];
     const slug = params.slug;
 
-    // Strategy 1: parameterised GROQ query (fastest)
     try {
-        product = await freshClient.fetch(PRODUCT_BY_SLUG_QUERY, { slug });
-    } catch { /* continue */ }
+        product = await getProductBySlug(slug);
+    } catch {}
 
-    // Strategy 2: fetch all Sanity products and find by slug (bypasses param issues)
     if (!product) {
-        try {
-            const all: Product[] = await freshClient.fetch(ALL_PRODUCTS_QUERY);
-            product = all?.find((p) => resolveSlug(p.slug) === slug) ?? null;
-        } catch { /* continue */ }
-    }
-
-    // Strategy 3: static fallback data
-    if (!product) {
-        const staticProduct = fallbackProducts.find(
-            (p) => resolveSlug(p.slug) === slug
-        );
+        const staticProduct = fallbackProducts.find(p => resolveSlug(p.slug) === slug);
         if (staticProduct) product = staticProduct as Product;
     }
 
-    if (!product) {
-        notFound();
-    }
+    if (!product) notFound();
 
-    // Fetch related products
     try {
-        relatedProducts = await freshClient.fetch(RELATED_PRODUCTS_QUERY, {
-            category: product.category,
-            currentSlug: params.slug,
-        });
+        relatedProducts = await getRelatedProducts(product!.category, slug, 4);
     } catch {
         relatedProducts = fallbackProducts
-            .filter(
-                (p) =>
-                    p.category === product!.category &&
-                    resolveSlug(p.slug) !== params.slug
-            )
+            .filter(p => p.category === product!.category && resolveSlug(p.slug) !== slug)
             .slice(0, 4) as Product[];
     }
 
     return (
         <Container className="pt-24 md:pt-32 pb-10 md:pb-16">
             <div className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-2 lg:gap-x-16 items-start">
-                {/* Gallery */}
-                <ProductGallery images={product.images} />
-
-                {/* Info */}
-                <ProductInfo product={product} />
+                <ProductGallery images={product!.images} />
+                <ProductInfo product={product!} />
             </div>
 
-            {/* Related Products */}
             {relatedProducts.length > 0 && (
                 <div className="mt-24 border-t pt-16">
                     <h2 className="mb-12 text-center text-3xl font-bold uppercase tracking-widest md:text-4xl">
                         Complete the Look
                     </h2>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
-                        {relatedProducts.map((related) => (
+                        {relatedProducts.map(related => (
                             <ProductCard key={related._id ?? related.id} product={related} />
                         ))}
                     </div>

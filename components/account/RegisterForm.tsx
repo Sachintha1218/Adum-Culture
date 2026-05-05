@@ -13,28 +13,25 @@ export default function RegisterForm() {
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setError(""); setSuccess("");
 
-        if (!name || !email || !password) {
-            setError("Please fill in all required fields.");
-            return;
-        }
+        if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
 
-        if (password.length < 6) {
-            setError("Password must be at least 6 characters long.");
-            return;
-        }
-
-        // Mock loading state
         setLoading(true);
-        setTimeout(() => {
-            register(name, email, phone);
+        try {
+            await register(name, email, password, phone || undefined);
+            setSuccess("Account created! Check your email to verify, then sign in.");
+            setName(""); setEmail(""); setPassword(""); setPhone("");
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
+        } finally {
             setLoading(false);
-        }, 1000);
+        }
     };
 
     return (
@@ -43,65 +40,26 @@ export default function RegisterForm() {
                 <h2 className="text-2xl font-serif font-bold uppercase tracking-widest mb-2">Create Account</h2>
                 <p className="text-muted-foreground">Join Adum Culture for exclusive access</p>
             </div>
-
             <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                    <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md text-center">
-                        {error}
-                    </div>
-                )}
+                {error && <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md text-center">{error}</div>}
+                {success && <div className="bg-green-50 text-green-700 text-sm p-3 rounded-md text-center">{success}</div>}
                 <div className="space-y-2">
                     <Label htmlFor="name">Full Name <span className="text-destructive">*</span></Label>
-                    <Input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Jane Doe"
-                        required
-                        className="w-full"
-                    />
+                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" required />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="register-email">Email Address <span className="text-destructive">*</span></Label>
-                    <Input
-                        id="register-email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@example.com"
-                        required
-                        className="w-full"
-                    />
+                    <Label htmlFor="reg-email">Email Address <span className="text-destructive">*</span></Label>
+                    <Input id="reg-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number (Optional)</Label>
-                    <Input
-                        id="phone"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="+1 (555) 000-0000"
-                        className="w-full"
-                    />
+                    <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+94 7X XXX XXXX" />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="register-password">Password <span className="text-destructive">*</span></Label>
-                    <Input
-                        id="register-password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        required
-                        className="w-full"
-                    />
+                    <Label htmlFor="reg-password">Password <span className="text-destructive">*</span></Label>
+                    <Input id="reg-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 8 characters" required />
                 </div>
-                <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={loading}
-                >
+                <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Creating Account..." : "Create Account"}
                 </Button>
             </form>

@@ -1,17 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/shared/Container";
-import { freshClient } from "@/sanity/lib/client";
-import { FEATURED_CATEGORIES_QUERY } from "@/sanity/lib/queries";
-import { resolveImageUrl, resolveSlug, resolveId } from "@/lib/sanity-helpers";
+import { getAllCollections } from "@/lib/admin-api";
+import { resolveSlug, resolveId } from "@/lib/sanity-helpers";
 import { Category } from "@/types";
 
 const FeaturedCategories = async () => {
     let featured: Category[] = [];
 
     try {
-        const sanityCategories = await freshClient.fetch(FEATURED_CATEGORIES_QUERY);
-        featured = sanityCategories ?? [];
+        featured = await getAllCollections();
     } catch {
         featured = [];
     }
@@ -36,7 +34,7 @@ const FeaturedCategories = async () => {
                     {featured.map((category) => {
                         const id = resolveId(category);
                         const slug = resolveSlug(category.slug);
-                        const imageUrl = resolveImageUrl(category.image, 800);
+                        const imageUrl = typeof category.image === 'string' ? category.image : '/placeholder.jpg';
                         return (
                             <Link
                                 key={id}

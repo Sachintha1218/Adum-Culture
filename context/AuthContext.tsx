@@ -2,177 +2,122 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-// Mock Types
+const API = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
+
+export interface OrderItem {
+    id: string;
+    name: string;
+    image?: string;
+    quantity: number;
+    price: number;
+    size?: string;
+    slug?: string;
+    sku?: string;
+}
+
 export interface Order {
     id: string;
-    date: string;
-    status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+    ormOrderNumber?: string | null;
+    createdAt: string;
+    status: string;
+    paymentStatus: string;
+    paymentMethod: string;
     total: number;
-    items: {
-        id: string;
-        name: string;
-        image: string;
-        quantity: number;
-        price: number;
-        size?: string;
-        slug?: string;
-    }[];
+    subtotal: number;
+    shippingCost: number;
+    discount: number;
+    items: OrderItem[];
+    customerName: string;
+    customerEmail?: string | null;
+    customerPhone: string;
+    shippingAddress: string;
+    city: string;
+    district: string;
 }
 
 export interface User {
     id: string;
     name: string;
     email: string;
-    phone?: string;
-    usedCoupons?: string[];
-    orders?: Order[];
+    phone?: string | null;
+    emailVerified?: boolean;
 }
 
 interface AuthContextType {
     user: User | null;
-    login: (email: string) => void;
-    register: (name: string, email: string, phone?: string) => void;
-    logout: () => void;
-    updateUser: (data: Partial<User>) => void;
-    recordUsedCoupon: (code: string) => void;
     isAuthenticated: boolean;
+    isLoading: boolean;
+    login: (email: string, password: string) => Promise<void>;
+    register: (name: string, email: string, password: string, phone?: string) => Promise<void>;
+    logout: () => Promise<void>;
+    updateUser: (data: Partial<User>) => void;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+async function apiFetch(path: string, options?: RequestInit) {
+    const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+    const res = await fetch(`${API}${path}`, {
+        ...options,
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...(options?.headers ?? {}),
+        },
+    });
+    const data = await res.json();
+    if (!data.success && res.status >= 400) throw new Error(data.message ?? "Request failed");
+    return data;
+}
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Load user from localStorage on mount
+    // On mount restore session from httpOnly cookie via /api/auth/me
     useEffect(() => {
-        const storedUser = localStorage.getItem("adum_user");
-        if (storedUser) {
-            try {
-                setUser(JSON.parse(storedUser));
-            } catch (error) {
-                // Silently ignore parse errors
-            }
-        }
+        apiFetch("/api/auth/me")
+            .then((data) => setUser(data.data.user))
+            .catch(() => setUser(null))
+            .finally(() => setIsLoading(false));
     }, []);
 
-    const login = (email: string) => {
-        // In a real app, this would verify credentials
-        // For mock purposes, if we have a stored user matching the email, we log them in,
-        // otherwise we just mock a successful login to avoid being blocked.
-
-        let mockUser: User = {
-            id: "mock-id-123",
-            name: "Test User",
-            email: email,
-            usedCoupons: [],
-            orders: [
-                {
-                    id: "ORD-8X9D2F",
-                    date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-                    status: 'Processing',
-                    total: 12500,
-                    items: [
-                        {
-                            id: "item-1",
-                            name: "Silk Evening Gown",
-                            image: "https://images.unsplash.com/photo-1566160911598-c923d386c91a?q=80&w=1000&auto=format&fit=crop",
-                            quantity: 1,
-                            price: 12500,
-                            size: "M",
-                            slug: "silk-evening-gown"
-                        }
-                    ]
-                },
-                {
-                    id: "ORD-3B2M1L",
-                    date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-                    status: 'Delivered',
-                    total: 18000,
-                    items: [
-                        {
-                            id: "item-2",
-                            name: "Linen Summer Dress",
-                            image: "https://images.unsplash.com/photo-1572804013309-8c98e4f5ed33?q=80&w=1000&auto=format&fit=crop",
-                            quantity: 1,
-                            price: 8500,
-                            size: "S",
-                            slug: "linen-summer-dress"
-                        },
-                        {
-                            id: "item-3",
-                            name: "Cashmere Cardigan",
-                            image: "https://images.unsplash.com/photo-1588622171447-0e6e73711913?q=80&w=1000&auto=format&fit=crop",
-                            quantity: 1,
-                            price: 9500,
-                            size: "M",
-                            slug: "cashmere-cardigan"
-                        }
-                    ]
-                }
-            ]
-        };
-
-        const storedUser = localStorage.getItem("adum_user");
-        if (storedUser) {
-            try {
-                const parsed = JSON.parse(storedUser);
-                if (parsed.email === email) {
-                    mockUser = parsed;
-                }
-            } catch (e) {
-                // Silently ignore parse errors
-            }
-        }
-
-        setUser(mockUser);
-        localStorage.setItem("adum_user", JSON.stringify(mockUser));
+    const login = async (email: string, password: string) => {
+        const data = await apiFetch("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify({ email, password }),
+        });
+        if (data.data.token) localStorage.setItem("auth_token", data.data.token);
+        setUser(data.data.user);
     };
 
-    const register = (name: string, email: string, phone?: string) => {
-        const newUser: User = {
-            id: Math.random().toString(36).substring(2, 9),
-            name,
-            email,
-            phone,
-            usedCoupons: [],
-        };
-        setUser(newUser);
-        localStorage.setItem("adum_user", JSON.stringify(newUser));
+    const register = async (name: string, email: string, password: string, phone?: string) => {
+        await apiFetch("/api/auth/register", {
+            method: "POST",
+            body: JSON.stringify({ name, email, password, ...(phone ? { phone } : {}) }),
+        });
+    };
+
+    const logout = async () => {
+        await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+        localStorage.removeItem("auth_token");
+        setUser(null);
     };
 
     const updateUser = (data: Partial<User>) => {
-        if (!user) return;
-        const updatedUser = { ...user, ...data };
-        setUser(updatedUser);
-        localStorage.setItem("adum_user", JSON.stringify(updatedUser));
+        setUser((prev) => (prev ? { ...prev, ...data } : null));
     };
 
-    const recordUsedCoupon = (code: string) => {
-        if (!user) return;
-        const updatedUser = {
-            ...user,
-            usedCoupons: [...(user.usedCoupons || []), code]
-        };
-        setUser(updatedUser);
-        localStorage.setItem("adum_user", JSON.stringify(updatedUser));
-    };
-
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("adum_user");
+    const refreshUser = async () => {
+        const data = await apiFetch("/api/auth/me");
+        setUser(data.data.user);
     };
 
     return (
         <AuthContext.Provider
-            value={{
-                user,
-                login,
-                register,
-                logout,
-                updateUser,
-                recordUsedCoupon,
-                isAuthenticated: !!user,
-            }}
+            value={{ user, isAuthenticated: !!user, isLoading, login, register, logout, updateUser, refreshUser }}
         >
             {children}
         </AuthContext.Provider>
@@ -181,8 +126,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
+    if (context === undefined) throw new Error("useAuth must be used within an AuthProvider");
     return context;
 };
+
+// Re-export apiFetch for use in other components
+export { apiFetch };
