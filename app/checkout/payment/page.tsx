@@ -8,7 +8,7 @@ import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/utils";
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import Script from "next/script";
 import Link from "next/link";
 
