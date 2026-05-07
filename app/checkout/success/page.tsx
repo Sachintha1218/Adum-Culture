@@ -29,6 +29,12 @@ function OrderSuccessContent() {
 
     useEffect(() => {
         if (!orderId) return;
+
+        // Verify payment with backend (marks order paid + triggers ORM sync + email)
+        apiFetch("/api/payment/verify", { method: "POST", body: JSON.stringify({ orderId }) })
+            .catch(() => {/* non-blocking */});
+
+        // Then load order details
         apiFetch(`/api/account/orders/${orderId}`)
             .then((res) => setOrder(res.data.order))
             .catch(() => {/* guest order — silently skip */})
