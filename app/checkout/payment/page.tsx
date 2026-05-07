@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { apiFetch } from "@/context/AuthContext";
 import Container from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,6 @@ export default function PaymentPage() {
 }
 
 function PaymentContent() {
-    const router = useRouter();
     const searchParams = useSearchParams();
     const orderId = searchParams.get("orderId");
 
