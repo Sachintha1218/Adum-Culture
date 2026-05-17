@@ -1,16 +1,30 @@
 import { Metadata } from "next";
 import Container from "@/components/shared/Container";
+import { getPageContent } from "@/lib/admin-api";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
     title: "Shipping Policy",
     description: "Adum Culture shipping policy — local and international delivery information, dispatch times, and tracking.",
 };
 
-export default function ShippingPage() {
+export default async function ShippingPage() {
+    let notice: string | null = null;
+    try {
+        const content = await getPageContent('shipping_info');
+        if (content?.body) notice = content.body;
+    } catch { /* no notice */ }
+
     return (
         <Container className="pt-24 pb-16 md:pt-32 md:pb-24 max-w-3xl">
             <h1 className="mb-2 text-3xl font-bold uppercase tracking-widest md:text-4xl">Shipping Policy</h1>
-            <p className="mb-12 text-sm text-muted-foreground">Adum Culture — Kiribathgoda, Sri Lanka 11600</p>
+            <p className="mb-8 text-sm text-muted-foreground">Adum Culture — Kiribathgoda, Sri Lanka 11600</p>
+            {notice && (
+                <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-900 whitespace-pre-line">
+                    {notice}
+                </div>
+            )}
 
             <div className="space-y-10 text-sm leading-relaxed text-muted-foreground">
 

@@ -6,7 +6,7 @@ import Footer from "@/components/shared/Footer";
 import WhatsAppWidget from "@/components/shared/WhatsAppWidget";
 import { Category } from "@/types";
 
-export default function SiteShell({ children, shopCategories }: { children: React.ReactNode; shopCategories: Category[] }) {
+export default function SiteShell({ children, shopCategories, bannerText }: { children: React.ReactNode; shopCategories: Category[]; bannerText?: string }) {
     const pathname = usePathname();
     const isStudio = pathname?.startsWith("/studio");
 
@@ -16,6 +16,11 @@ export default function SiteShell({ children, shopCategories }: { children: Reac
 
     return (
         <>
+            {bannerText && (
+                <div className="bg-black text-white text-xs text-center py-2 px-4 tracking-widest uppercase font-medium">
+                    {bannerText}
+                </div>
+            )}
             <Navbar shopCategories={shopCategories} />
             <main className="flex-1">{children}</main>
             <Footer />

@@ -6,7 +6,7 @@ import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
-import { getAllCollections } from "@/lib/admin-api";
+import { getAllCollections, getPageContent } from "@/lib/admin-api";
 import { Category } from "@/types";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
@@ -72,17 +72,24 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 60;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   let shopCategories: Category[] = [];
+  let bannerText = '';
   try {
-    const fetched = await getAllCollections();
+    const [fetched, banner] = await Promise.all([
+      getAllCollections(),
+      getPageContent('homepage_banner'),
+    ]);
     if (fetched?.length > 0) shopCategories = fetched;
+    if (banner?.body) bannerText = banner.body;
   } catch {
-    // fallback already set
+    // fallbacks already set
   }
 
   return (
@@ -94,7 +101,7 @@ export default async function RootLayout({
       )}>
         <AuthProvider>
           <CartProvider>
-            <SiteShell shopCategories={shopCategories}>
+            <SiteShell shopCategories={shopCategories} bannerText={bannerText}>
               {children}
             </SiteShell>
           </CartProvider>
