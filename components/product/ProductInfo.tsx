@@ -220,7 +220,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                         onClick={() => setIsSizeGuideOpen(true)}
                         className="text-xs text-muted-foreground underline uppercase tracking-widest hover:text-foreground transition-colors"
                     >
-                        Size Guide
+                        Sizes & Colors
                     </button>
                 </div>
 
@@ -430,7 +430,8 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             <SizeGuideModal
                 isOpen={isSizeGuideOpen}
                 onClose={() => setIsSizeGuideOpen(false)}
-                sizeGuide={product.sizeGuide}
+                colorVariants={product.colorVariants}
+                sizeGuideData={product.sizeGuideData}
             />
         </div>
     );

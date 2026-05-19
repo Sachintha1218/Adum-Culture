@@ -21,6 +21,14 @@ export interface SizeGuide {
   image: SanityImage;
 }
 
+export interface SizeGuideData {
+  name: string;
+  note?: string | null;
+  unit: string;
+  columns: string[];
+  rows: { size: string; values: string[] }[];
+}
+
 // ─── Product ───────────────────────────────────────────────────────────────
 export interface Product {
   // Sanity uses _id; static data uses id — support both
@@ -38,6 +46,7 @@ export interface Product {
   sizes: SizeStock[];
   colors: string[];
   colorVariants?: ColorVariant[];
+  sizeGuideData?: SizeGuideData | null;
   newArrival?: boolean;
   bestSeller?: boolean;
   slug: string | { current: string };
