@@ -92,7 +92,6 @@ const Footer = () => {
                     <span className="text-xs text-muted-foreground uppercase tracking-wider">We Accept:</span>
                     <Image src="/images/payment/visa.svg" alt="Visa" width={48} height={30} className="h-7 w-auto opacity-70" />
                     <Image src="/images/payment/mastercard.svg" alt="Mastercard" width={48} height={30} className="h-7 w-auto opacity-70" />
-                    <Image src="/images/payment/koko.svg" alt="Koko" width={48} height={30} className="h-7 w-auto opacity-70" />
                 </div>
 
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">

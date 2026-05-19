@@ -372,32 +372,6 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 )}
             </Accordion>
 
-            {/* ─── Instalment Payments ─── */}
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 mt-4">
-                <p className="text-sm font-medium text-center uppercase tracking-wider mb-4">
-                    Available Instalments
-                </p>
-                <div className="flex gap-4 justify-center items-center flex-wrap">
-                    <div className="flex flex-col items-center gap-1">
-                        <div className="h-10 px-4 rounded-md border flex items-center justify-center bg-zinc-50 dark:bg-zinc-900">
-                            <span className="font-bold text-[#E82B61] text-lg leading-none">Koko</span>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground">3 Instalments</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                        <div className="h-10 px-4 rounded-md border flex items-center justify-center bg-zinc-50 dark:bg-zinc-900">
-                            <span className="font-bold text-[#1E3A8A] text-lg leading-none">Intpay</span>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground">Up to 6 Months</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1">
-                        <div className="h-10 px-4 rounded-md border flex items-center justify-center bg-zinc-50 dark:bg-zinc-900">
-                            <span className="font-bold text-[#00A19D] text-lg leading-none">PayZy</span>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground">Flexible Payments</span>
-                    </div>
-                </div>
-            </div>
 
             <SizeGuideModal
                 isOpen={isSizeGuideOpen}
