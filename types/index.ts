@@ -10,6 +10,12 @@ export interface SizeStock {
   quantity: number;
 }
 
+export interface ColorVariant {
+  colorHex: string;
+  colorName: string;
+  sizes: { size: string; stock: number }[];
+}
+
 export interface SizeGuide {
   name?: string;
   image: SanityImage;
@@ -31,6 +37,7 @@ export interface Product {
   sizeGuide?: SizeGuide;
   sizes: SizeStock[];
   colors: string[];
+  colorVariants?: ColorVariant[];
   newArrival?: boolean;
   bestSeller?: boolean;
   slug: string | { current: string };

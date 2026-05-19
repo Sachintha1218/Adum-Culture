@@ -37,18 +37,39 @@ interface ProductInfoProps {
 const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     const router = useRouter();
     const { addToCart } = useCart();
+    const hasColorVariants = product.colorVariants && product.colorVariants.length > 0;
+    const [selectedColor, setSelectedColor] = useState<string | null>(
+        hasColorVariants ? (product.colorVariants![0].colorHex) : null
+    );
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [isAdding, setIsAdding] = useState(false);
 
+    // Active color variant (if using color variants)
+    const activeVariant = hasColorVariants
+        ? product.colorVariants!.find(cv => cv.colorHex === selectedColor) ?? product.colorVariants![0]
+        : null;
+
+    // Active sizes — from selected color variant, or flat product.sizes
+    const activeSizes: { size: string; quantity: number }[] = activeVariant
+        ? activeVariant.sizes.map(s => ({ size: s.size, quantity: s.stock }))
+        : (product.sizes || []);
+
     const getSizeStock = (size: string): number => {
-        const entry = product.sizes.find((s) => s.size === size);
+        const entry = activeSizes.find((s) => s.size === size);
         return entry?.quantity ?? 0;
     };
 
+    // Reset selected size when color changes
+    const handleColorSelect = (hex: string) => {
+        setSelectedColor(hex);
+        setSelectedSize(null);
+        setQuantity(1);
+    };
+
     /** Total stock across all sizes */
-    const totalStock: number = (product.sizes || []).reduce((sum, s) => sum + (s?.quantity || 0), 0);
+    const totalStock: number = activeSizes.reduce((sum, s) => sum + (s?.quantity || 0), 0);
 
     const selectedSizeStock = selectedSize ? getSizeStock(selectedSize) : null;
 
@@ -158,6 +179,39 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 </div>
             </div>
 
+            {/* ─── Color Selector ─── */}
+            {hasColorVariants && (
+                <div className="space-y-3">
+                    <h3 className="font-medium text-sm uppercase tracking-wide">
+                        Color
+                        {activeVariant?.colorName && (
+                            <span className="ml-2 font-normal text-muted-foreground normal-case tracking-normal">
+                                — {activeVariant.colorName}
+                            </span>
+                        )}
+                    </h3>
+                    <div className="flex flex-wrap gap-2.5">
+                        {product.colorVariants!.map((cv) => {
+                            const isSelected = selectedColor === cv.colorHex;
+                            return (
+                                <button
+                                    key={cv.colorHex}
+                                    onClick={() => handleColorSelect(cv.colorHex)}
+                                    title={cv.colorName || cv.colorHex}
+                                    className={cn(
+                                        "w-8 h-8 rounded-full border-2 transition-all",
+                                        isSelected
+                                            ? "border-foreground scale-110 shadow-md"
+                                            : "border-transparent hover:border-gray-300 hover:scale-105"
+                                    )}
+                                    style={{ backgroundColor: cv.colorHex }}
+                                />
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
             {/* ─── Size Selector ─── */}
             <div className="space-y-4">
                 <div className="flex justify-between">
@@ -171,7 +225,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    {(product.sizes || []).filter(Boolean).map((entry) => {
+                    {activeSizes.filter(Boolean).map((entry) => {
                         const size = entry.size;
                         const sizeQty = entry.quantity;
                         const isOutOfStock = sizeQty === 0;
