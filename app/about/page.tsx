@@ -33,7 +33,6 @@ const values = [
 export default async function AboutPage() {
     let storyBody: string | null = null;
     let aboutImage: string | null = null;
-    let aboutDescription: string | null = null;
     try {
         const [story, aboutUs] = await Promise.all([
             getPageContent('about_story'),
@@ -41,7 +40,6 @@ export default async function AboutPage() {
         ]);
         if (story?.body) storyBody = story.body;
         if (aboutUs?.imageUrl) aboutImage = aboutUs.imageUrl;
-        if (aboutUs?.body) aboutDescription = aboutUs.body;
     } catch { /* use hardcoded */ }
 
     return (
