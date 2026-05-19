@@ -12,12 +12,6 @@ interface SizeGuideModalProps {
     sizeGuideData?: SizeGuideData | null;
 }
 
-const sizeMapping: Record<string, string> = {
-    XXS: "UK04 - XXS", XS: "UK06 - XS", S: "UK08 - S",
-    M: "UK10 - M", L: "UK12 - L", XL: "UK14 - XL", XXL: "UK16 - XXL",
-};
-const displaySize = (s: string) => sizeMapping[s] || s;
-
 function SlashOverlay() {
     return (
         <span className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-inherit pointer-events-none">
@@ -113,7 +107,7 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
                                                             "font-medium text-xs",
                                                             oos ? "text-gray-300" : "text-gray-800"
                                                         )}>
-                                                            {displaySize(s.size)}
+                                                            {s.size}
                                                         </span>
                                                         <span className={cn(
                                                             "text-[9px] font-semibold",
@@ -182,7 +176,7 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
                                         {(sizeGuideData.rows as { size: string; values: string[] }[]).map((row, i) => (
                                             <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
                                                 <td className="border border-gray-200 px-3 py-2 font-semibold text-gray-800">
-                                                    {displaySize(row.size)}
+                                                    {row.size}
                                                 </td>
                                                 {row.values.map((val, j) => (
                                                     <td key={j} className="border border-gray-200 px-3 py-2 text-center text-gray-600">

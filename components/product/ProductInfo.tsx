@@ -93,7 +93,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             return;
         }
         setIsAdding(true);
-        addToCart(product, quantity, getDisplaySize(selectedSize));
+        addToCart(product, quantity, selectedSize);
         setTimeout(() => setIsAdding(false), 500);
     };
 
@@ -106,21 +106,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             alert("This size is out of stock");
             return;
         }
-        addToCart(product, quantity, getDisplaySize(selectedSize));
+        addToCart(product, quantity, selectedSize);
         router.push("/checkout");
     };
-
-    const sizeMapping: Record<string, string> = {
-        XXS: "UK04 - XXS",
-        XS: "UK06 - XS",
-        S: "UK08 - S",
-        M: "UK10 - M",
-        L: "UK12 - L",
-        XL: "UK14 - XL",
-        XXL: "UK16 - XXL",
-    };
-
-    const getDisplaySize = (size: string) => sizeMapping[size] || size;
 
     const discountPercentage =
         product.originalPrice && product.originalPrice > product.price
@@ -245,7 +233,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                     {/* Not Available button */}
                                     <button
                                         disabled
-                                        aria-label={`${getDisplaySize(size)} — Not available`}
+                                        aria-label={`${size} — Not available`}
                                         className={cn(
                                             "flex h-12 px-4 items-center justify-center rounded-full text-sm font-medium",
                                             "border border-dashed border-muted-foreground/30",
@@ -254,7 +242,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                         )}
                                     >
                                         <span className="line-through decoration-muted-foreground/30">
-                                            {getDisplaySize(size)}
+                                            {size}
                                         </span>
                                     </button>
                                     {/* Hover tooltip */}
@@ -279,7 +267,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                                         : "border-input bg-background hover:border-foreground"
                                 )}
                             >
-                                {getDisplaySize(size)}
+                                {size}
                             </button>
                         );
                     })}
