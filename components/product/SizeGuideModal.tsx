@@ -12,6 +12,20 @@ interface SizeGuideModalProps {
     sizeGuideData?: SizeGuideData | null;
 }
 
+const sizeMapping: Record<string, string> = {
+    XXS: "UK04 - XXS", XS: "UK06 - XS", S: "UK08 - S",
+    M: "UK10 - M", L: "UK12 - L", XL: "UK14 - XL", XXL: "UK16 - XXL",
+};
+const displaySize = (s: string) => sizeMapping[s] || s;
+
+function SlashOverlay() {
+    return (
+        <span className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-inherit pointer-events-none">
+            <span className="block w-[140%] h-px bg-gray-400 rotate-[-45deg]" />
+        </span>
+    );
+}
+
 export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }: SizeGuideModalProps) {
     const hasColors = colorVariants && colorVariants.length > 0;
     const [activeColor, setActiveColor] = useState<string | null>(
@@ -25,6 +39,7 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
         ? colorVariants!.find(cv => cv.colorHex === activeColor) ?? colorVariants![0]
         : null;
 
+    const isColorOos = (cv: ColorVariant) => cv.sizes.every(s => s.stock === 0);
     const showBothUnits = sizeGuideData?.unit === 'BOTH';
 
     return (
@@ -38,70 +53,80 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
 
                 <div className="space-y-6 pb-2">
 
-                    {/* ── Color availability section ── */}
+                    {/* ── Color toggles ── */}
                     {hasColors && (
                         <div className="space-y-4">
-                            {/* Color toggles */}
                             <div>
                                 <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">Select Color</p>
-                                <div className="flex flex-wrap gap-3">
-                                    {colorVariants!.map(cv => (
-                                        <button
-                                            key={cv.colorHex}
-                                            onClick={() => setActiveColor(cv.colorHex)}
-                                            className={cn(
-                                                "flex flex-col items-center gap-1.5 group"
-                                            )}
-                                        >
-                                            <span className={cn(
-                                                "w-9 h-9 rounded-full border-2 transition-all block",
-                                                activeColor === cv.colorHex
-                                                    ? "border-black scale-110 shadow-md"
-                                                    : "border-gray-200 hover:border-gray-400 hover:scale-105"
-                                            )}
-                                                style={{ backgroundColor: cv.colorHex }}
-                                            />
-                                            <span className={cn(
-                                                "text-[10px] uppercase tracking-wide",
-                                                activeColor === cv.colorHex ? "font-semibold text-black" : "text-gray-400"
-                                            )}>
-                                                {cv.colorName || cv.colorHex}
-                                            </span>
-                                        </button>
-                                    ))}
+                                <div className="flex flex-wrap gap-4">
+                                    {colorVariants!.map(cv => {
+                                        const oos = isColorOos(cv);
+                                        const isActive = activeColor === cv.colorHex;
+                                        return (
+                                            <button
+                                                key={cv.colorHex}
+                                                onClick={() => setActiveColor(cv.colorHex)}
+                                                className="flex flex-col items-center gap-1.5"
+                                            >
+                                                {/* Circle with optional slash */}
+                                                <span className={cn(
+                                                    "relative w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all",
+                                                    isActive ? "border-black scale-110 shadow-md" : "border-gray-200 hover:border-gray-400 hover:scale-105",
+                                                    oos && "opacity-60"
+                                                )}
+                                                    style={{ backgroundColor: cv.colorHex }}>
+                                                    {oos && <SlashOverlay />}
+                                                </span>
+                                                <span className={cn(
+                                                    "text-[10px] uppercase tracking-wide",
+                                                    isActive ? "font-semibold text-black" : "text-gray-400",
+                                                    oos && "line-through text-gray-300"
+                                                )}>
+                                                    {cv.colorName || cv.colorHex}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
-                            {/* Size availability for selected color */}
+                            {/* ── Sizes for active color ── */}
                             {activeVariant && (
                                 <div>
                                     <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
                                         Available Sizes — {activeVariant.colorName || activeVariant.colorHex}
                                     </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {activeVariant.sizes.length === 0 && (
-                                            <p className="text-sm text-gray-400">No sizes set for this color.</p>
-                                        )}
-                                        {activeVariant.sizes.map(s => (
-                                            <div key={s.size} className={cn(
-                                                "flex flex-col items-center gap-1 px-4 py-2 rounded-lg border text-sm",
-                                                s.stock > 0
-                                                    ? "border-gray-200 bg-white"
-                                                    : "border-dashed border-gray-200 bg-gray-50 opacity-50"
-                                            )}>
-                                                <span className={cn(
-                                                    "font-medium",
-                                                    s.stock === 0 && "line-through text-gray-400"
-                                                )}>{s.size}</span>
-                                                <span className={cn(
-                                                    "text-[10px] font-semibold",
-                                                    s.stock > 0 ? "text-green-600" : "text-red-400"
-                                                )}>
-                                                    {s.stock > 0 ? `${s.stock} left` : "Out of stock"}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    {activeVariant.sizes.length === 0 ? (
+                                        <p className="text-sm text-gray-400">No sizes set for this color.</p>
+                                    ) : (
+                                        <div className="flex flex-wrap gap-2">
+                                            {activeVariant.sizes.map(s => {
+                                                const oos = s.stock === 0;
+                                                return (
+                                                    <div key={s.size} className={cn(
+                                                        "relative flex flex-col items-center gap-0.5 px-4 py-2.5 rounded-full border text-sm select-none overflow-hidden",
+                                                        oos
+                                                            ? "border-dashed border-gray-200 bg-gray-50"
+                                                            : "border-gray-200 bg-white"
+                                                    )}>
+                                                        <span className={cn(
+                                                            "font-medium text-xs",
+                                                            oos ? "text-gray-300" : "text-gray-800"
+                                                        )}>
+                                                            {displaySize(s.size)}
+                                                        </span>
+                                                        <span className={cn(
+                                                            "text-[9px] font-semibold",
+                                                            oos ? "text-red-300" : "text-green-600"
+                                                        )}>
+                                                            {oos ? "Out of stock" : `${s.stock} left`}
+                                                        </span>
+                                                        {oos && <SlashOverlay />}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
@@ -109,15 +134,14 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
                         </div>
                     )}
 
-                    {/* ── Measurement chart section ── */}
+                    {/* ── Measurement chart ── */}
                     {sizeGuideData && (
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                 <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
                                     {sizeGuideData.name} — Measurements
                                 </p>
-                                {/* CM / INCH toggle */}
-                                {(showBothUnits) && (
+                                {showBothUnits && (
                                     <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs">
                                         {(['CM', 'INCH'] as const).map(u => (
                                             <button key={u} onClick={() => setUnit(u)}
@@ -149,8 +173,7 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
                                             <th className="border border-gray-200 px-3 py-2 text-left text-xs font-semibold text-gray-600">Size</th>
                                             {(sizeGuideData.columns as string[]).map((col, i) => (
                                                 <th key={i} className="border border-gray-200 px-3 py-2 text-center text-xs font-semibold text-gray-600">
-                                                    {col}
-                                                    {showBothUnits && <span className="ml-1 text-gray-400 font-normal">({unit})</span>}
+                                                    {col}{showBothUnits && <span className="ml-1 text-gray-400 font-normal">({unit})</span>}
                                                 </th>
                                             ))}
                                         </tr>
@@ -158,7 +181,9 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
                                     <tbody>
                                         {(sizeGuideData.rows as { size: string; values: string[] }[]).map((row, i) => (
                                             <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
-                                                <td className="border border-gray-200 px-3 py-2 font-semibold text-gray-800">{row.size}</td>
+                                                <td className="border border-gray-200 px-3 py-2 font-semibold text-gray-800">
+                                                    {displaySize(row.size)}
+                                                </td>
                                                 {row.values.map((val, j) => (
                                                     <td key={j} className="border border-gray-200 px-3 py-2 text-center text-gray-600">
                                                         {val || '—'}
@@ -172,7 +197,6 @@ export function SizeGuideModal({ isOpen, onClose, colorVariants, sizeGuideData }
                         </div>
                     )}
 
-                    {/* Fallback if nothing set */}
                     {!hasColors && !sizeGuideData && (
                         <p className="text-center text-sm text-gray-400 py-4">
                             No size guide available for this product.

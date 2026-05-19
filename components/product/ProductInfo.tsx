@@ -193,19 +193,27 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     <div className="flex flex-wrap gap-2.5">
                         {product.colorVariants!.map((cv) => {
                             const isSelected = selectedColor === cv.colorHex;
+                            const isOos = cv.sizes.every(s => s.stock === 0);
                             return (
                                 <button
                                     key={cv.colorHex}
                                     onClick={() => handleColorSelect(cv.colorHex)}
-                                    title={cv.colorName || cv.colorHex}
+                                    title={isOos ? `${cv.colorName || cv.colorHex} — Out of Stock` : (cv.colorName || cv.colorHex)}
                                     className={cn(
-                                        "w-8 h-8 rounded-full border-2 transition-all",
+                                        "relative w-9 h-9 rounded-full border-2 transition-all overflow-hidden flex items-center justify-center",
                                         isSelected
                                             ? "border-foreground scale-110 shadow-md"
-                                            : "border-transparent hover:border-gray-300 hover:scale-105"
+                                            : "border-transparent hover:border-gray-300 hover:scale-105",
+                                        isOos && "opacity-60"
                                     )}
                                     style={{ backgroundColor: cv.colorHex }}
-                                />
+                                >
+                                    {isOos && (
+                                        <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <span className="block w-[140%] h-px bg-gray-400 rotate-[-45deg]" />
+                                        </span>
+                                    )}
+                                </button>
                             );
                         })}
                     </div>
