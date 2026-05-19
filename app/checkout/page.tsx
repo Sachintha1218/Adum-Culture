@@ -103,6 +103,7 @@ export default function CheckoutPage() {
                 price: item.price,
                 quantity: item.quantity,
                 size: item.selectedSize,
+                color: item.selectedColor ?? undefined,
             })),
         };
 

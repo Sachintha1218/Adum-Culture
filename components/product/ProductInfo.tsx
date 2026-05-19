@@ -93,7 +93,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             return;
         }
         setIsAdding(true);
-        addToCart(product, quantity, selectedSize);
+        addToCart(product, quantity, selectedSize, selectedColor);
         setTimeout(() => setIsAdding(false), 500);
     };
 
@@ -106,7 +106,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
             alert("This size is out of stock");
             return;
         }
-        addToCart(product, quantity, selectedSize);
+        addToCart(product, quantity, selectedSize, selectedColor);
         router.push("/checkout");
     };
 
