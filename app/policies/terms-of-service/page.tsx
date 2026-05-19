@@ -1,16 +1,28 @@
 import { Metadata } from "next";
 import Container from "@/components/shared/Container";
+import { getPageContent } from "@/lib/admin-api";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
     title: "Terms of Service",
     description: "Adum Culture Terms of Service — general conditions, terms of sale, and terms of use for www.adumculture.com.",
 };
 
-export default function TermsOfServicePage() {
+export default async function TermsOfServicePage() {
+    let cmsBody: string | null = null;
+    try {
+        const content = await getPageContent('terms_of_service');
+        if (content?.body) cmsBody = content.body;
+    } catch { /* use hardcoded */ }
+
     return (
         <Container className="pt-24 pb-16 md:pt-32 md:pb-24 max-w-3xl">
             <h1 className="mb-2 text-3xl font-bold uppercase tracking-widest md:text-4xl">Terms of Service</h1>
             <p className="mb-12 text-sm text-muted-foreground">ADUM CULTURE — Kiribathgoda, Sri Lanka 11600 | www.adumculture.com</p>
+            {cmsBody ? (
+                <div className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{cmsBody}</div>
+            ) : (<>
 
             <div className="space-y-10 text-sm leading-relaxed text-muted-foreground">
 
@@ -107,6 +119,7 @@ export default function TermsOfServicePage() {
                     <p>Website: <a href="https://www.adumculture.com" className="text-foreground underline hover:text-primary">www.adumculture.com</a></p>
                 </div>
             </div>
+            </>)}
         </Container>
     );
 }

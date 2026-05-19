@@ -32,16 +32,16 @@ const values = [
 
 export default async function AboutPage() {
     let storyBody: string | null = null;
-    let heroTitle: string | null = null;
-    let heroSubtitle: string | null = null;
+    let aboutImage: string | null = null;
+    let aboutDescription: string | null = null;
     try {
-        const [story, hero] = await Promise.all([
+        const [story, aboutUs] = await Promise.all([
             getPageContent('about_story'),
-            getPageContent('about_hero'),
+            getPageContent('about_us'),
         ]);
         if (story?.body) storyBody = story.body;
-        if (hero?.title) heroTitle = hero.title;
-        if (hero?.body) heroSubtitle = hero.body;
+        if (aboutUs?.imageUrl) aboutImage = aboutUs.imageUrl;
+        if (aboutUs?.body) aboutDescription = aboutUs.body;
     } catch { /* use hardcoded */ }
 
     return (
@@ -49,19 +49,18 @@ export default async function AboutPage() {
             {/* Header */}
             <div className="mx-auto max-w-3xl text-center mb-16 md:mb-24">
                 <h1 className="mb-4 text-4xl font-bold uppercase tracking-widest md:text-5xl">
-                    {heroTitle ?? 'About Adum Culture'}
+                    About Adum Culture
                 </h1>
                 <p className="text-lg leading-relaxed text-muted-foreground md:text-xl font-light tracking-wide">
-                    {heroSubtitle ?? 'Beyond the fabrics.'}
+                    Beyond the fabrics.
                 </p>
             </div>
 
             {/* Story Section */}
             <div className="grid gap-12 md:grid-cols-2 md:items-center mb-24">
-                {/* TODO: Brand portrait image — recommended 800×1000px portrait. Replace src with brand photography when assets are provided. */}
                 <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                     <Image
-                        src="https://images.unsplash.com/photo-1560343776-97e7d202ff0e?q=80&w=2000&auto=format&fit=crop"
+                        src={aboutImage ?? "https://images.unsplash.com/photo-1560343776-97e7d202ff0e?q=80&w=2000&auto=format&fit=crop"}
                         alt="Adum Culture Brand Image"
                         fill
                         className="object-cover"

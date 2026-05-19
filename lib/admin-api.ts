@@ -66,7 +66,7 @@ export async function getHeroSlides() {
 
 // ── Page Content ──────────────────────────────────────────────────────────────
 
-export async function getPageContent(key: string): Promise<{ title: string; body: string; imageUrl?: string } | null> {
-  const data = await apiFetch(`/api/public/content/${key}`)
-  return data?.data?.content ?? null
+export async function getPageContent(key: string): Promise<{ title?: string; body?: string; imageUrl?: string; data?: Record<string, string> } | null> {
+  const result = await apiFetch(`/api/public/content/${key}`)
+  return result?.data?.content ?? null
 }

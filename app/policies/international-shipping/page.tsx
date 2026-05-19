@@ -1,16 +1,28 @@
 import { Metadata } from "next";
 import Container from "@/components/shared/Container";
+import { getPageContent } from "@/lib/admin-api";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
     title: "International Shipping Policy",
     description: "Adum Culture international shopping and shipping policy — duties, taxes, payment methods, and delivery timeframes.",
 };
 
-export default function InternationalShippingPage() {
+export default async function InternationalShippingPage() {
+    let cmsBody: string | null = null;
+    try {
+        const content = await getPageContent('international_shipping');
+        if (content?.body) cmsBody = content.body;
+    } catch { /* use hardcoded */ }
+
     return (
         <Container className="pt-24 pb-16 md:pt-32 md:pb-24 max-w-3xl">
             <h1 className="mb-2 text-3xl font-bold uppercase tracking-widest md:text-4xl">International Shipping Policy</h1>
             <p className="mb-12 text-sm text-muted-foreground">Adum Culture — Kiribathgoda, Sri Lanka 11600</p>
+            {cmsBody ? (
+                <div className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{cmsBody}</div>
+            ) : (<>
 
             <div className="space-y-10 text-sm leading-relaxed text-muted-foreground">
 
@@ -72,6 +84,7 @@ export default function InternationalShippingPage() {
                     <p>Hotline: <a href="https://wa.me/94760613070" target="_blank" rel="noopener noreferrer" className="text-foreground underline hover:text-primary">+94 76 061 3070</a></p>
                 </div>
             </div>
+            </>)}
         </Container>
     );
 }
