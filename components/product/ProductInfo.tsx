@@ -32,9 +32,10 @@ const BulletOrText = ({ value }: { value: string | string[] | undefined }) => {
 
 interface ProductInfoProps {
     product: Product;
+    onColorChange?: (hex: string) => void;
 }
 
-const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => {
     const router = useRouter();
     const { addToCart } = useCart();
     const hasColorVariants = product.colorVariants && product.colorVariants.length > 0;
@@ -66,6 +67,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         setSelectedColor(hex);
         setSelectedSize(null);
         setQuantity(1);
+        onColorChange?.(hex);
     };
 
     /** Total stock across all sizes */

@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Container from "@/components/shared/Container";
-import ProductGallery from "@/components/product/ProductGallery";
-import ProductInfo from "@/components/product/ProductInfo";
+import ProductPageClient from "@/components/product/ProductPageClient";
 import ProductCard from "@/components/shared/ProductCard";
 import { getProductBySlug, getAllProductSlugs, getRelatedProducts } from "@/lib/admin-api";
 import { products as fallbackProducts } from "@/data/products";
@@ -77,10 +76,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     return (
         <Container className="pt-24 md:pt-32 pb-10 md:pb-16">
-            <div className="grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-2 lg:gap-x-16 items-start">
-                <ProductGallery images={product!.images} />
-                <ProductInfo product={product!} />
-            </div>
+            <ProductPageClient product={product!} />
 
             {relatedProducts.length > 0 && (
                 <div className="mt-24 border-t pt-16">

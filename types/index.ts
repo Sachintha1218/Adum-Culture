@@ -12,7 +12,9 @@ export interface SizeStock {
 
 export interface ColorVariant {
   colorHex: string;
-  colorName: string;
+  colorName?: string;
+  sku?: string | null;
+  images?: string[];          // URL strings for variable product per-color images
   sizes: { size: string; stock: number }[];
 }
 
@@ -45,6 +47,7 @@ export interface Product {
   sizeGuide?: SizeGuide;
   sizes: SizeStock[];
   colors: string[];
+  productType?: string;       // 'single' | 'variable'
   colorVariants?: ColorVariant[];
   sizeGuideData?: SizeGuideData | null;
   newArrival?: boolean;

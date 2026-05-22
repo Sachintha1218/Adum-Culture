@@ -8,11 +8,19 @@ import { SanityImage } from "@/types";
 
 interface ProductGalleryProps {
     images: (SanityImage | string)[];
+    // When controlled externally (variable product color switching)
+    controlledImages?: string[];
 }
 
-const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
-    const resolvedImages = (images ?? []).map((img) => resolveImageUrl(img, 1200));
+const ProductGallery: React.FC<ProductGalleryProps> = ({ images, controlledImages }) => {
+    const resolvedImages = controlledImages && controlledImages.length > 0
+        ? controlledImages
+        : (images ?? []).map((img) => resolveImageUrl(img, 1200));
     const [selectedImage, setSelectedImage] = useState(resolvedImages[0] || "");
+
+    // When controlled images change (color switch), reset to first image
+    const activeImages = controlledImages && controlledImages.length > 0 ? controlledImages : resolvedImages;
+    const displayImage = activeImages.includes(selectedImage) ? selectedImage : (activeImages[0] || "");
 
 
     return (
@@ -23,8 +31,8 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                 {/* Main Image View - Moved First for Mobile */}
                 <div className="relative w-full aspect-[3/4] md:flex-1 md:aspect-auto rounded-sm overflow-hidden bg-gray-100 group order-1 md:order-2">
                     <Image
-                        key={selectedImage}
-                        src={selectedImage}
+                        key={displayImage}
+                        src={displayImage}
                         alt="Product main image"
                         fill
                         className="object-cover animate-in fade-in duration-500 ease-out"
@@ -39,7 +47,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                     <div className="hidden md:block absolute left-[8px] top-4 bottom-4 w-px bg-primary/20 z-0" />
 
                     <div className="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-y-auto md:overflow-x-hidden h-24 md:h-full py-2 md:py-4 z-10 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                        {resolvedImages.map((image, index) => (
+                        {activeImages.map((image, index) => (
                             <div key={index} className="relative flex items-center group flex-shrink-0">
                                 {/* Active Indicator Line */}
                                 <div
@@ -47,7 +55,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                                         "absolute bg-primary transition-all duration-300 z-20",
                                         "md:left-0 md:w-[2px] md:h-full",
                                         "bottom-0 w-full h-[2px] md:hidden",
-                                        selectedImage === image
+                                        displayImage === image
                                             ? "opacity-100 scale-100"
                                             : "opacity-0 scale-0 group-hover:opacity-50 group-hover:scale-100"
                                     )}
@@ -58,7 +66,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                                     aria-label={`View product image ${index + 1}`}
                                     className={cn(
                                         "relative md:ml-4 h-full md:h-auto aspect-[3/4] w-16 md:w-full overflow-hidden rounded-sm bg-gray-100 transition-all duration-500 will-change-transform mb-2 md:mb-0",
-                                        selectedImage === image
+                                        displayImage === image
                                             ? "opacity-100 shadow-md scale-100"
                                             : "opacity-60 hover:opacity-100 scale-95 hover:scale-100 cursor-pointer"
                                     )}
@@ -73,7 +81,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images }) => {
                                     {/* Subtle overlay for unselected items */}
                                     <div className={cn(
                                         "absolute inset-0 bg-background/20 transition-opacity duration-300",
-                                        selectedImage === image ? "opacity-0" : "opacity-100 group-hover:opacity-0"
+                                        displayImage === image ? "opacity-0" : "opacity-100 group-hover:opacity-0"
                                     )} />
                                 </button>
                             </div>
