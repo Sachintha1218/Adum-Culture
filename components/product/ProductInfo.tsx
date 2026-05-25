@@ -38,7 +38,7 @@ interface ProductInfoProps {
 const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => {
     const router = useRouter();
     const { addToCart } = useCart();
-    const hasColorVariants = product.colorVariants && product.colorVariants.length > 0;
+    const hasColorVariants = product.productType !== 'single' && product.colorVariants && product.colorVariants.length > 0;
     const [selectedColor, setSelectedColor] = useState<string | null>(
         hasColorVariants ? (product.colorVariants![0].colorHex) : null
     );
