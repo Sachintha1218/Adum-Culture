@@ -58,59 +58,75 @@ export function CartSheet() {
                         cartItems.map((item) => {
                             const itemId = item._id ?? item.id ?? '';
                             const itemSlug = resolveSlug(item.slug);
-                            const imgSrc = resolveImageUrl(item.images[0], 200);
+
+                            // Use the selected color variant's first image if available
+                            const colorVariantImg = item.selectedColor && item.colorVariants
+                                ? item.colorVariants.find(cv => cv.colorHex === item.selectedColor)?.images?.[0]
+                                : undefined;
+                            const imgSrc = colorVariantImg ?? resolveImageUrl(item.images[0], 200);
+
                             return (
-                            <div key={`${itemId}-${item.selectedSize}`} className="flex gap-4 border-b pb-6 last:border-0 last:pb-0">
-                                {/* Image */}
-                                <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-gray-100 rounded">
-                                    <Image
-                                        src={imgSrc}
-                                        alt={item.name}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                </div>
-
-                                {/* Details */}
-                                <div className="flex flex-1 flex-col justify-between">
-                                    <div className="flex justify-between items-start gap-2">
-                                        <div>
-                                            <h3 className="font-medium text-sm leading-tight uppercase tracking-wide">
-                                                <Link href={`/shop/${itemSlug}`} onClick={closeCart}>
-                                                    {item.name}
-                                                </Link>
-                                            </h3>
-                                            <p className="mt-1 text-xs text-muted-foreground">Size: {item.selectedSize}</p>
-                                        </div>
-                                        <p className="font-medium text-sm shrink-0">{formatCurrency(item.price * item.quantity)}</p>
+                                <div key={`${itemId}-${item.selectedSize}-${item.selectedColor ?? ''}`} className="flex gap-4 border-b pb-6 last:border-0 last:pb-0">
+                                    {/* Image */}
+                                    <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-gray-100 rounded">
+                                        <Image
+                                            src={imgSrc}
+                                            alt={item.name}
+                                            fill
+                                            className="object-cover"
+                                        />
                                     </div>
 
-                                    <div className="flex items-center justify-between mt-4">
-                                        <div className="flex items-center rounded-full border px-1 h-7">
+                                    {/* Details */}
+                                    <div className="flex flex-1 flex-col justify-between">
+                                        <div className="flex justify-between items-start gap-2">
+                                            <div>
+                                                <h3 className="font-medium text-sm leading-tight uppercase tracking-wide">
+                                                    <Link href={`/shop/${itemSlug}`} onClick={closeCart}>
+                                                        {item.name}
+                                                    </Link>
+                                                </h3>
+                                                <p className="mt-1 text-xs text-muted-foreground">
+                                                    Size: {item.selectedSize}
+                                                    {item.selectedColor && (
+                                                        <span className="ml-2 inline-flex items-center gap-1">
+                                                            <span
+                                                                className="inline-block w-2.5 h-2.5 rounded-full border border-gray-200"
+                                                                style={{ backgroundColor: item.selectedColor }}
+                                                            />
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <p className="font-medium text-sm shrink-0">{formatCurrency(item.price * item.quantity)}</p>
+                                        </div>
+
+                                        <div className="flex items-center justify-between mt-4">
+                                            <div className="flex items-center rounded-full border px-1 h-7">
+                                                <button
+                                                    onClick={() => updateQuantity(itemId, item.selectedSize, item.quantity - 1, item.selectedColor)}
+                                                    disabled={item.quantity <= 1}
+                                                    className="p-1 hover:text-primary disabled:opacity-50"
+                                                >
+                                                    <Minus className="h-3 w-3" />
+                                                </button>
+                                                <span className="mx-2 text-xs w-4 text-center">{item.quantity}</span>
+                                                <button
+                                                    onClick={() => updateQuantity(itemId, item.selectedSize, item.quantity + 1, item.selectedColor)}
+                                                    className="p-1 hover:text-primary"
+                                                >
+                                                    <Plus className="h-3 w-3" />
+                                                </button>
+                                            </div>
                                             <button
-                                                onClick={() => updateQuantity(itemId, item.selectedSize, item.quantity - 1)}
-                                                disabled={item.quantity <= 1}
-                                                className="p-1 hover:text-primary disabled:opacity-50"
+                                                onClick={() => removeFromCart(itemId, item.selectedSize, item.selectedColor)}
+                                                className="text-xs text-muted-foreground underline hover:text-destructive"
                                             >
-                                                <Minus className="h-3 w-3" />
-                                            </button>
-                                            <span className="mx-2 text-xs w-4 text-center">{item.quantity}</span>
-                                            <button
-                                                onClick={() => updateQuantity(itemId, item.selectedSize, item.quantity + 1)}
-                                                className="p-1 hover:text-primary"
-                                            >
-                                                <Plus className="h-3 w-3" />
+                                                Remove
                                             </button>
                                         </div>
-                                        <button
-                                            onClick={() => removeFromCart(itemId, item.selectedSize)}
-                                            className="text-xs text-muted-foreground underline hover:text-destructive"
-                                        >
-                                            Remove
-                                        </button>
                                     </div>
                                 </div>
-                            </div>
                             );
                         })
                     )}
