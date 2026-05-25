@@ -24,8 +24,9 @@ function convertValue(val: string, storedUnit: string, displayUnit: 'CM' | 'INCH
 }
 
 export function SizeGuideModal({ isOpen, onClose, sizeGuideData }: SizeGuideModalProps) {
-    const storedUnit = sizeGuideData?.unit ?? 'INCH';
-    const [unit, setUnit] = useState<'CM' | 'INCH'>(storedUnit === 'CM' ? 'CM' : 'INCH');
+    // Normalise legacy "BOTH" → "INCH" so conversion always works
+    const storedUnit: 'CM' | 'INCH' = sizeGuideData?.unit === 'CM' ? 'CM' : 'INCH';
+    const [unit, setUnit] = useState<'CM' | 'INCH'>(storedUnit);
     const [hoveredRow, setHoveredRow] = useState<number | null>(null);
     const [hoveredCol, setHoveredCol] = useState<number | null>(null);
 
