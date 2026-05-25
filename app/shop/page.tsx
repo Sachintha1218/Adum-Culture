@@ -172,12 +172,23 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                     <div className="md:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <Button variant="outline" className="flex items-center gap-2">
+                                <Button variant="outline" className="flex items-center gap-2 relative">
                                     <Filter className="h-4 w-4" />
                                     Filters
+                                    {(() => {
+                                        const count =
+                                            (searchParams.sizes ? searchParams.sizes.split(",").filter(Boolean).length : 0) +
+                                            (searchParams.colors ? searchParams.colors.split(",").filter(Boolean).length : 0) +
+                                            (searchParams.category ? 1 : 0);
+                                        return count > 0 ? (
+                                            <span className="absolute -top-1.5 -right-1.5 bg-foreground text-background text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                                                {count}
+                                            </span>
+                                        ) : null;
+                                    })()}
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent side="left" className="w-[85%] sm:max-w-md overflow-y-auto h-full pt-16">
+                            <SheetContent side="left" className="w-[85%] sm:max-w-md overflow-y-auto h-full pt-14 px-5">
                                 <Suspense fallback={<div>Loading filters...</div>}>
                                     <FilterSidebar categories={allCategories} sizes={availableSizes} colors={availableColors} />
                                 </Suspense>

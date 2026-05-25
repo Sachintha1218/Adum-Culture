@@ -231,27 +231,22 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
 
                         if (isOutOfStock) {
                             return (
-                                <div key={size} className="relative group">
-                                    {/* Not Available button */}
-                                    <button
-                                        disabled
-                                        aria-label={`${size} — Not available`}
-                                        className={cn(
-                                            "flex h-12 px-4 items-center justify-center rounded-full text-sm font-medium",
-                                            "border border-dashed border-muted-foreground/30",
-                                            "bg-muted/20 text-muted-foreground/40",
-                                            "cursor-not-allowed select-none"
-                                        )}
-                                    >
-                                        <span className="line-through decoration-muted-foreground/30">
-                                            {size}
-                                        </span>
-                                    </button>
-                                    {/* Hover tooltip */}
-                                    <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-foreground px-2 py-1 text-[10px] text-background opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                        Not Available
-                                    </div>
-                                </div>
+                                <button
+                                    key={size}
+                                    disabled
+                                    aria-label={`${size} — Out of stock`}
+                                    title="Out of stock"
+                                    className={cn(
+                                        "flex h-12 px-4 items-center justify-center rounded-full text-sm font-medium",
+                                        "border border-dashed border-muted-foreground/30",
+                                        "bg-muted/20 text-muted-foreground/40",
+                                        "cursor-not-allowed select-none"
+                                    )}
+                                >
+                                    <span className="line-through decoration-muted-foreground/30">
+                                        {size}
+                                    </span>
+                                </button>
                             );
                         }
 
