@@ -55,7 +55,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     const SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL'];
     const allSizeSet = new Set<string>();
     allProducts.forEach(p => p.sizes?.forEach((s: { size: string }) => allSizeSet.add(s.size)));
-    const availableSizes = [...allSizeSet].sort((a, b) => {
+    const availableSizes = Array.from(allSizeSet).sort((a, b) => {
         const ai = SIZE_ORDER.indexOf(a), bi = SIZE_ORDER.indexOf(b);
         if (ai === -1 && bi === -1) return a.localeCompare(b);
         if (ai === -1) return 1;
@@ -70,7 +70,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             if (!colorMap.has(cv.colorHex)) colorMap.set(cv.colorHex, cv.colorName ?? null);
         });
     });
-    const availableColors = [...colorMap.entries()].map(([hex, name]) => ({ hex, name }));
+    const availableColors = Array.from(colorMap.entries()).map(([hex, name]) => ({ hex, name }));
 
     // 1. Filter products
     let filteredProducts = allProducts;
