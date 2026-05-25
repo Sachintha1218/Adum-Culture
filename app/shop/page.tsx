@@ -51,6 +51,27 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         allCategories = fallbackCategories;
     }
 
+    // Derive available sizes (from all products, sorted by standard order)
+    const SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL'];
+    const allSizeSet = new Set<string>();
+    allProducts.forEach(p => p.sizes?.forEach((s: { size: string }) => allSizeSet.add(s.size)));
+    const availableSizes = [...allSizeSet].sort((a, b) => {
+        const ai = SIZE_ORDER.indexOf(a), bi = SIZE_ORDER.indexOf(b);
+        if (ai === -1 && bi === -1) return a.localeCompare(b);
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+    });
+
+    // Derive available colors (unique by hex, from colorVariants of all products)
+    const colorMap = new Map<string, string | null>();
+    allProducts.forEach(p => {
+        (p.colorVariants ?? []).forEach((cv: { colorHex: string; colorName?: string | null }) => {
+            if (!colorMap.has(cv.colorHex)) colorMap.set(cv.colorHex, cv.colorName ?? null);
+        });
+    });
+    const availableColors = [...colorMap.entries()].map(([hex, name]) => ({ hex, name }));
+
     // 1. Filter products
     let filteredProducts = allProducts;
 
@@ -119,7 +140,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     if (searchParams.colors) {
         const colorsArr = searchParams.colors.split(",");
         filteredProducts = filteredProducts.filter((p) =>
-            p.colors && p.colors.some((color) => colorsArr.includes(color))
+            (p.colorVariants ?? []).some((cv: { colorHex: string }) => colorsArr.includes(cv.colorHex))
         );
     }
 
@@ -158,7 +179,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                             </SheetTrigger>
                             <SheetContent side="left" className="w-[85%] sm:max-w-md overflow-y-auto h-full pt-16">
                                 <Suspense fallback={<div>Loading filters...</div>}>
-                                    <FilterSidebar categories={allCategories} />
+                                    <FilterSidebar categories={allCategories} sizes={availableSizes} colors={availableColors} />
                                 </Suspense>
                             </SheetContent>
                         </Sheet>
@@ -173,7 +194,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 {/* Sidebar - Hidden on mobile, visible on tablet+ */}
                 <aside className="hidden md:block md:w-auto md:col-span-1 shrink-0">
                     <Suspense fallback={<div>Loading filters...</div>}>
-                        <FilterSidebar categories={allCategories} />
+                        <FilterSidebar categories={allCategories} sizes={availableSizes} colors={availableColors} />
                     </Suspense>
                 </aside>
 

@@ -9,14 +9,18 @@ import { Category } from "@/types";
 import { resolveSlug, resolveId } from "@/lib/sanity-helpers";
 import { cn } from "@/lib/utils";
 
-const sizes = ["XS", "S", "M", "L", "XL"];
-const colors = ["Black", "White", "Navy", "Red", "Beige", "Floral Print"];
+interface ColorOption {
+    hex: string;
+    name?: string | null;
+}
 
 interface FilterSidebarProps {
     categories: Category[];
+    sizes: string[];
+    colors: ColorOption[];
 }
 
-export const FilterSidebar = ({ categories }: FilterSidebarProps) => {
+export const FilterSidebar = ({ categories, sizes, colors }: FilterSidebarProps) => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -26,11 +30,7 @@ export const FilterSidebar = ({ categories }: FilterSidebarProps) => {
 
     const handleCategoryChange = (slug: string | null) => {
         const params = new URLSearchParams(searchParams.toString());
-
-        // When clicking a category, we want to clear any active search query
-        // so that the user sees all products in that category, not just those matching the old search.
         params.delete("search");
-
         if (slug) {
             params.set("category", slug);
         } else {
@@ -47,7 +47,6 @@ export const FilterSidebar = ({ categories }: FilterSidebarProps) => {
         } else {
             newSizes.push(size);
         }
-
         if (newSizes.length > 0) {
             params.set("sizes", newSizes.join(","));
         } else {
@@ -56,15 +55,14 @@ export const FilterSidebar = ({ categories }: FilterSidebarProps) => {
         router.push(`/shop?${params.toString()}`);
     };
 
-    const handleColorToggle = (color: string) => {
+    const handleColorToggle = (hex: string) => {
         const params = new URLSearchParams(searchParams.toString());
         let newColors = [...selectedColors];
-        if (newColors.includes(color)) {
-            newColors = newColors.filter(c => c !== color);
+        if (newColors.includes(hex)) {
+            newColors = newColors.filter(c => c !== hex);
         } else {
-            newColors.push(color);
+            newColors.push(hex);
         }
-
         if (newColors.length > 0) {
             params.set("colors", newColors.join(","));
         } else {
@@ -75,6 +73,7 @@ export const FilterSidebar = ({ categories }: FilterSidebarProps) => {
 
     return (
         <div className="space-y-6">
+            {/* Categories */}
             <div>
                 <h3 className="text-lg font-semibold uppercase tracking-wider">Categories</h3>
                 <Separator className="my-4" />
@@ -109,41 +108,59 @@ export const FilterSidebar = ({ categories }: FilterSidebarProps) => {
                 </div>
             </div>
 
-            <div>
-                <h3 className="text-lg font-semibold uppercase tracking-wider">Size</h3>
-                <Separator className="my-4" />
-                <div className="grid grid-cols-3 gap-2">
-                    {sizes.map((size) => (
-                        <Button
-                            key={size}
-                            variant={selectedSizes.includes(size) ? "default" : "outline"}
-                            size="sm"
-                            className="h-9 w-full"
-                            onClick={() => handleSizeToggle(size)}
-                        >
-                            {size}
-                        </Button>
-                    ))}
+            {/* Size */}
+            {sizes.length > 0 && (
+                <div>
+                    <h3 className="text-lg font-semibold uppercase tracking-wider">Size</h3>
+                    <Separator className="my-4" />
+                    <div className="grid grid-cols-3 gap-2">
+                        {sizes.map((size) => (
+                            <Button
+                                key={size}
+                                variant={selectedSizes.includes(size) ? "default" : "outline"}
+                                size="sm"
+                                className="h-9 w-full"
+                                onClick={() => handleSizeToggle(size)}
+                            >
+                                {size}
+                            </Button>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
-            <div>
-                <h3 className="text-lg font-semibold uppercase tracking-wider">Color</h3>
-                <Separator className="my-4" />
-                <div className="flex flex-wrap gap-2">
-                    {colors.map((color) => (
-                        <Button
-                            key={color}
-                            variant={selectedColors.includes(color) ? "default" : "outline"}
-                            size="sm"
-                            className="h-9"
-                            onClick={() => handleColorToggle(color)}
-                        >
-                            {color}
-                        </Button>
-                    ))}
+            {/* Color */}
+            {colors.length > 0 && (
+                <div>
+                    <h3 className="text-lg font-semibold uppercase tracking-wider">Color</h3>
+                    <Separator className="my-4" />
+                    <div className="flex flex-wrap gap-3">
+                        {colors.map(({ hex, name }) => {
+                            const isSelected = selectedColors.includes(hex);
+                            return (
+                                <button
+                                    key={hex}
+                                    title={name || hex}
+                                    onClick={() => handleColorToggle(hex)}
+                                    className={cn(
+                                        "relative w-8 h-8 rounded-full border-2 transition-all overflow-hidden",
+                                        isSelected
+                                            ? "border-foreground scale-110 shadow-md ring-2 ring-offset-1 ring-foreground/30"
+                                            : "border-gray-200 hover:border-gray-400 hover:scale-105"
+                                    )}
+                                    style={{ backgroundColor: hex }}
+                                >
+                                    {isSelected && (
+                                        <span className="absolute inset-0 flex items-center justify-center">
+                                            <Check className="h-3.5 w-3.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]" />
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
