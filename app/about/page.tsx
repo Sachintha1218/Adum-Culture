@@ -11,7 +11,7 @@ export const metadata: Metadata = {
         "Beyond the fabrics. Discover the story behind Adum Culture — a Sri Lankan luxury fashion brand built from passion, sacrifice, and a vision to reach the world.",
 };
 
-const values = [
+const FALLBACK_VALUES = [
     {
         title: "Beyond the Fabrics",
         body: "We believe clothing is an extension of who you are. We empower our community to wear their unique identity with absolute pride, offering more than just garments — we offer a lifestyle and a platform for self-expression.",
@@ -33,13 +33,23 @@ const values = [
 export default async function AboutPage() {
     let storyBody: string | null = null;
     let aboutImage: string | null = null;
+    let values = FALLBACK_VALUES;
     try {
-        const [story, aboutUs] = await Promise.all([
+        const [story, aboutUs, aboutValues] = await Promise.all([
             getPageContent('about_story'),
             getPageContent('about_us'),
+            getPageContent('about_values'),
         ]);
         if (story?.body) storyBody = story.body;
         if (aboutUs?.imageUrl) aboutImage = aboutUs.imageUrl;
+        if (aboutValues?.data) {
+            const d = aboutValues.data as Record<string, string>;
+            const fromCms = [1, 2, 3, 4].map(n => ({
+                title: d[`value${n}_title`] ?? '',
+                body: d[`value${n}_body`] ?? '',
+            })).filter(v => v.title || v.body);
+            if (fromCms.length > 0) values = fromCms;
+        }
     } catch { /* use hardcoded */ }
 
     return (
