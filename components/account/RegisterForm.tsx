@@ -25,8 +25,7 @@ export default function RegisterForm() {
         setLoading(true);
         try {
             await register(name, email, password, phone || undefined);
-            setSuccess("Account created! Check your email to verify, then sign in.");
-            setName(""); setEmail(""); setPassword(""); setPhone("");
+            setSuccess("Account created! Welcome to Adum Culture.");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
         } finally {
