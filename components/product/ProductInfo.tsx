@@ -131,7 +131,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
                         Item Code: {product.itemCode}
                     </p>
                 )}
-                <h1 className="font-serif text-4xl font-bold uppercase tracking-widest text-foreground md:text-5xl">
+                <h1 className="font-serif text-2xl font-bold uppercase tracking-widest text-foreground md:text-3xl">
                     {product.name}
                 </h1>
 
