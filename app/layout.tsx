@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat, Poppins } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import SiteShell from "@/components/shared/SiteShell";
 import { CartProvider } from "@/context/CartContext";
@@ -8,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllCollections, getPageContent } from "@/lib/admin-api";
 import { Category } from "@/types";
+
+const GA_MEASUREMENT_ID = "G-FRY2ZJBZKD";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 const poppins = Poppins({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"], variable: "--font-heading" });
@@ -107,6 +110,20 @@ export default async function RootLayout({
           </CartProvider>
         </AuthProvider>
         <Toaster />
+
+        {/* Google Analytics 4 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );
