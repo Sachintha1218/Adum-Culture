@@ -44,7 +44,7 @@ export default function LoginForm() {
         if (!forgotEmail.trim()) { setForgotError("Please enter your email address."); return; }
         setForgotLoading(true);
         try {
-            await apiFetch("/api/public/auth/otp/send", {
+            await apiFetch("/api/auth/otp/send", {
                 method: "POST",
                 body: JSON.stringify({ email: forgotEmail.trim(), purpose: "password_reset" }),
             });
@@ -65,7 +65,7 @@ export default function LoginForm() {
         if (newPassword !== confirmPassword) { setForgotError("Passwords do not match."); return; }
         setForgotLoading(true);
         try {
-            await apiFetch("/api/public/auth/otp/verify", {
+            await apiFetch("/api/auth/otp/verify", {
                 method: "POST",
                 body: JSON.stringify({ email: forgotEmail.trim(), otp, purpose: "password_reset", newPassword }),
             });

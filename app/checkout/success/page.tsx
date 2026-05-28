@@ -38,7 +38,7 @@ function OrderSuccessContent() {
         }
 
         // Verify payment status — shows success only if order is paid
-        apiFetch("/api/public/payment/verify", { method: "POST", body: JSON.stringify({ orderId }) })
+        apiFetch("/api/payment/verify", { method: "POST", body: JSON.stringify({ orderId }) })
             .then((res) => {
                 const paid = res.data?.paymentStatus === "paid";
                 setPaymentConfirmed(paid);
@@ -50,7 +50,7 @@ function OrderSuccessContent() {
             .finally(() => {
                 setVerifying(false);
                 // Load order details for display
-                apiFetch(`/api/public/orders/${orderId}`)
+                apiFetch(`/api/account/orders/${orderId}`)
                     .then((res) => setOrder(res.data.order))
                     .catch(() => {});
             });

@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-const API = process.env.NEXT_PUBLIC_ADMIN_URL ?? "http://localhost:3002";
+const API = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3001";
 
 export interface OrderItem {
     id: string;
@@ -76,16 +76,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // On mount restore session from httpOnly cookie via /api/public/auth/me
+    // On mount restore session from httpOnly cookie via /api/auth/me
     useEffect(() => {
-        apiFetch("/api/public/auth/me")
+        apiFetch("/api/auth/me")
             .then((data) => setUser(data.data.user))
             .catch(() => setUser(null))
             .finally(() => setIsLoading(false));
     }, []);
 
     const login = async (email: string, password: string) => {
-        const data = await apiFetch("/api/public/auth/login", {
+        const data = await apiFetch("/api/auth/login", {
             method: "POST",
             body: JSON.stringify({ email, password }),
         });
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const register = async (name: string, email: string, password: string, phone?: string) => {
-        const data = await apiFetch("/api/public/auth/register", {
+        const data = await apiFetch("/api/auth/register", {
             method: "POST",
             body: JSON.stringify({ name, email, password, ...(phone ? { phone } : {}) }),
         });
@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const logout = async () => {
-        await apiFetch("/api/public/auth/logout", { method: "POST" }).catch(() => {});
+        await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
         localStorage.removeItem("auth_token");
         setUser(null);
     };
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const refreshUser = async () => {
-        const data = await apiFetch("/api/public/auth/me");
+        const data = await apiFetch("/api/auth/me");
         setUser(data.data.user);
     };
 

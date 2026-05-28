@@ -53,7 +53,7 @@ export default function CheckoutPage() {
         if (!couponInput.trim()) { setCouponError("Please enter a coupon code."); return; }
 
         try {
-            const res = await apiFetch("/api/public/orders/validate-coupon", {
+            const res = await apiFetch("/api/orders/validate-coupon", {
                 method: "POST",
                 body: JSON.stringify({ code: couponInput.trim(), subtotal: cartTotal }),
             });
@@ -108,7 +108,7 @@ export default function CheckoutPage() {
         };
 
         try {
-            const data = await apiFetch("/api/public/orders/create", { method: "POST", body: JSON.stringify(payload) });
+            const data = await apiFetch("/api/orders/create", { method: "POST", body: JSON.stringify(payload) });
             const { orderId, requiresPayment } = data.data;
 
             if (requiresPayment) {

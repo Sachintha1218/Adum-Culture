@@ -42,7 +42,7 @@ export default function AccountDashboard() {
     useEffect(() => {
         if (activeTab !== "orders" || orders.length > 0) return;
         setOrdersLoading(true);
-        apiFetch("/api/public/account/orders")
+        apiFetch("/api/account/orders")
             .then((res) => setOrders(res.data.orders))
             .catch(() => {})
             .finally(() => setOrdersLoading(false));
@@ -52,7 +52,7 @@ export default function AccountDashboard() {
         e.preventDefault();
         setIsSaving(true); setSaveSuccess(false); setSaveError("");
         try {
-            const res = await apiFetch("/api/public/account/profile", {
+            const res = await apiFetch("/api/account/profile", {
                 method: "PUT",
                 body: JSON.stringify({ name, phone }),
             });
@@ -69,7 +69,7 @@ export default function AccountDashboard() {
     const handleSendOtp = async () => {
         setIsOtpProcessing(true); setOtpMessage(""); setOtpError("");
         try {
-            await apiFetch("/api/public/auth/otp/send", {
+            await apiFetch("/api/auth/otp/send", {
                 method: "POST",
                 body: JSON.stringify({ email: user?.email, purpose: "password_reset" }),
             });
@@ -86,7 +86,7 @@ export default function AccountDashboard() {
         if (otpInput.length < 6) { setOtpError("Please enter a valid 6-digit code."); return; }
         setIsOtpProcessing(true); setOtpError("");
         try {
-            await apiFetch("/api/public/auth/otp/verify", {
+            await apiFetch("/api/auth/otp/verify", {
                 method: "POST",
                 body: JSON.stringify({ email: user?.email, otp: otpInput, purpose: "password_reset" }),
             });
@@ -103,7 +103,7 @@ export default function AccountDashboard() {
         if (newPassword.length < 8) { setOtpError("Password must be at least 8 characters."); return; }
         setIsOtpProcessing(true); setOtpError("");
         try {
-            await apiFetch("/api/public/auth/otp/verify", {
+            await apiFetch("/api/auth/otp/verify", {
                 method: "POST",
                 body: JSON.stringify({ email: user?.email, otp: otpInput, purpose: "password_reset", newPassword }),
             });
