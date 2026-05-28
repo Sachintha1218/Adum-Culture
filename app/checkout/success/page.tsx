@@ -37,20 +37,20 @@ function OrderSuccessContent() {
             return;
         }
 
-        // Verify payment status first — only show success if actually paid
-        apiFetch("/api/payment/verify", { method: "POST", body: JSON.stringify({ orderId }) })
+        // Verify payment status — shows success only if order is paid
+        apiFetch("/api/public/payment/verify", { method: "POST", body: JSON.stringify({ orderId }) })
             .then((res) => {
                 const paid = res.data?.paymentStatus === "paid";
                 setPaymentConfirmed(paid);
                 if (paid) {
-                    clearCart(); // only clear cart on confirmed payment
+                    clearCart();
                 }
             })
             .catch(() => setPaymentConfirmed(false))
             .finally(() => {
                 setVerifying(false);
-                // Load order details regardless (for display)
-                apiFetch(`/api/account/orders/${orderId}`)
+                // Load order details for display
+                apiFetch(`/api/public/orders/${orderId}`)
                     .then((res) => setOrder(res.data.order))
                     .catch(() => {});
             });
