@@ -35,7 +35,7 @@ function PaymentContent() {
         }
 
         // Call backend which calls OnePay server-to-server and returns redirect URL
-        apiFetch("/api/payment/initiate", {
+        apiFetch("/api/public/payment/initiate", {
             method: "POST",
             body: JSON.stringify({ orderId }),
         })
