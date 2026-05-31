@@ -49,7 +49,7 @@ export function SizeGuideModal({ isOpen, onClose, sizeGuideData }: SizeGuideModa
                             {/* Header: name + CM/INCH toggle — stacks on mobile */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
-                                    {sizeGuideData.name} — Measurements
+                                    {sizeGuideData.name}
                                 </p>
                                 <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs self-start sm:self-auto">
                                     {(['CM', 'INCH'] as const).map(u => (
