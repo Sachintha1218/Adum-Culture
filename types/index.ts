@@ -61,6 +61,7 @@ export interface Product {
   careInstructions?: string | string[];
   styleGuide?: string[];
   shippingInfo?: string[];
+  returnInfo?: string[];
 }
 
 // ─── Category ─────────────────────────────────────────────────────────────

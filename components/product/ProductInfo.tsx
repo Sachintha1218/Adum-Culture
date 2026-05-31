@@ -407,16 +407,31 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
                     </AccordionItem>
                 )}
 
-                {product.shippingInfo && product.shippingInfo.length > 0 && (
+                {(product.shippingInfo?.length || product.returnInfo?.length) ? (
                     <AccordionItem value="shipping">
                         <AccordionTrigger className="uppercase tracking-widest text-sm">
                             Shipping & Returns
                         </AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground leading-relaxed">
-                            <BulletOrText value={product.shippingInfo} />
+                        <AccordionContent className="text-muted-foreground leading-relaxed space-y-4">
+                            {product.shippingInfo && product.shippingInfo.length > 0 && (
+                                <div>
+                                    <p className="font-semibold text-foreground mb-1.5">Shipping</p>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        {product.shippingInfo.map((item, i) => <li key={i}>{item}</li>)}
+                                    </ul>
+                                </div>
+                            )}
+                            {product.returnInfo && product.returnInfo.length > 0 && (
+                                <div>
+                                    <p className="font-semibold text-foreground mb-1.5">Returns & Exchange</p>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        {product.returnInfo.map((item, i) => <li key={i}>{item}</li>)}
+                                    </ul>
+                                </div>
+                            )}
                         </AccordionContent>
                     </AccordionItem>
-                )}
+                ) : null}
             </Accordion>
 
 
