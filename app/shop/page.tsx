@@ -145,7 +145,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     }
 
     // 2. Sort products
-    const sort = searchParams.sort || "newest";
+    const sort = searchParams.sort || "featured";
     filteredProducts = [...filteredProducts].sort((a, b) => {
         switch (sort) {
             case "price-asc":
@@ -153,8 +153,10 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             case "price-desc":
                 return b.price - a.price;
             case "newest":
+                return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
+            case "featured":
             default:
-                return 0; // Sanity already orders by _createdAt desc
+                return (a.displayOrder ?? 0) - (b.displayOrder ?? 0);
         }
     });
 

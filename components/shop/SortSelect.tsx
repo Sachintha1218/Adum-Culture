@@ -12,7 +12,7 @@ import {
 export const SortSelect = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const currentSort = searchParams.get("sort") || "newest";
+    const currentSort = searchParams.get("sort") || "featured";
 
     const handleSortChange = (value: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -26,6 +26,7 @@ export const SortSelect = () => {
                 <SelectValue placeholder="Sort By" />
             </SelectTrigger>
             <SelectContent>
+                <SelectItem value="featured">Featured</SelectItem>
                 <SelectItem value="newest">Newest Arrivals</SelectItem>
                 <SelectItem value="price-asc">Price: Low to High</SelectItem>
                 <SelectItem value="price-desc">Price: High to Low</SelectItem>

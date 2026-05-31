@@ -62,6 +62,8 @@ export interface Product {
   styleGuide?: string[];
   shippingInfo?: string[];
   returnInfo?: string[];
+  displayOrder?: number;
+  createdAt?: string;
 }
 
 // ─── Category ─────────────────────────────────────────────────────────────
