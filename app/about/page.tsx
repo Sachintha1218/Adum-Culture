@@ -32,6 +32,7 @@ const FALLBACK_VALUES = [
 
 export default async function AboutPage() {
     let storyBody: string | null = null;
+    let aboutBody: string | null = null;
     let aboutImage: string | null = null;
     let values = FALLBACK_VALUES;
     try {
@@ -41,6 +42,7 @@ export default async function AboutPage() {
             getPageContent('about_values'),
         ]);
         if (story?.body) storyBody = story.body;
+        if (aboutUs?.body) aboutBody = aboutUs.body;
         if (aboutUs?.imageUrl) aboutImage = aboutUs.imageUrl;
         if (aboutValues?.data) {
             const d = aboutValues.data as Record<string, string>;
@@ -77,8 +79,10 @@ export default async function AboutPage() {
                 </div>
                 <div className="space-y-5">
                     <h2 className="text-2xl font-bold uppercase tracking-wide">Our Story</h2>
-                    {storyBody ? (
-                        <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{storyBody}</p>
+                    {(aboutBody || storyBody) ? (
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                            {aboutBody ?? storyBody}
+                        </p>
                     ) : (
                         <>
                             <p className="text-muted-foreground leading-relaxed">
