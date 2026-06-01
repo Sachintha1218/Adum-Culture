@@ -67,7 +67,7 @@ export default async function AboutPage() {
             </div>
 
             {/* Story Section */}
-            <div className="grid gap-12 md:grid-cols-2 md:items-center mb-24">
+            <div className="grid gap-12 md:grid-cols-2 md:items-start mb-24">
                 <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-gray-100">
                     <Image
                         src={aboutImage ?? "https://images.unsplash.com/photo-1560343776-97e7d202ff0e?q=80&w=2000&auto=format&fit=crop"}
