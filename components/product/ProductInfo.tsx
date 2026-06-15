@@ -125,8 +125,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
     // Add-to-cart & buy-now are only enabled when a valid in-stock size is selected
     const canPurchase = selectedSize !== null && getSizeStock(selectedSize) > 0;
 
-    // The selected size (and color, if applicable) is out of stock
-    const isSelectionSoldOut = selectedSize !== null && getSizeStock(selectedSize) === 0;
+    // The selected size (and color, if applicable) is out of stock, or every
+    // size in this selection is out of stock (nothing left to pick at all)
+    const isSelectionSoldOut =
+        (selectedSize !== null && getSizeStock(selectedSize) === 0) || totalStock === 0;
 
     return (
         <div className="flex flex-col gap-y-8 sticky top-24">
@@ -371,7 +373,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
                     </div>
                 </div>
 
-                {!selectedSize && (
+                {!selectedSize && !isSelectionSoldOut && (
                     <p className="text-xs text-muted-foreground text-center">
                         Please select a size to continue
                     </p>

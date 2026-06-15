@@ -35,6 +35,7 @@ export function NotifyMeModal({
     const [colorHex, setColorHex] = useState(initialColorHex ?? colorVariants?.[0]?.colorHex ?? "");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
     useEffect(() => {
@@ -43,6 +44,7 @@ export function NotifyMeModal({
         setColorHex(initialColorHex ?? colorVariants?.[0]?.colorHex ?? "");
         setName("");
         setEmail("");
+        setPhone("");
         setStatus("idle");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
@@ -63,6 +65,7 @@ export function NotifyMeModal({
                     colorName: hasColors ? selectedColor?.colorName : undefined,
                     name: name.trim(),
                     email: email.trim(),
+                    phone: phone.trim() || undefined,
                 }),
             });
             if (!res.ok) throw new Error("Request failed");
@@ -152,6 +155,20 @@ export function NotifyMeModal({
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
                                 placeholder="you@example.com"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="notify-phone">
+                                Mobile Number{" "}
+                                <span className="text-muted-foreground font-normal">(optional)</span>
+                            </Label>
+                            <Input
+                                id="notify-phone"
+                                type="tel"
+                                value={phone}
+                                onChange={e => setPhone(e.target.value)}
+                                placeholder="07X XXX XXXX"
                             />
                         </div>
 
