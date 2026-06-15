@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Minus, Plus, ShoppingBag, CreditCard } from "lucide-react";
+import { Minus, Plus, ShoppingBag, CreditCard, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/accordion";
 import { Product } from "@/types";
 import { formatCurrency, cn } from "@/lib/utils";
+import { resolveSlug } from "@/lib/sanity-helpers";
 import { useCart } from "@/context/CartContext";
 import { SizeGuideModal } from "./SizeGuideModal";
+import { NotifyMeModal } from "./NotifyMeModal";
 
 // Renders a string as a paragraph, or an array as bullet points
 const BulletOrText = ({ value }: { value: string | string[] | undefined }) => {
@@ -44,6 +46,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
     );
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+    const [isNotifyOpen, setIsNotifyOpen] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [isAdding, setIsAdding] = useState(false);
 
@@ -121,6 +124,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
 
     // Add-to-cart & buy-now are only enabled when a valid in-stock size is selected
     const canPurchase = selectedSize !== null && getSizeStock(selectedSize) > 0;
+
+    // The selected size (and color, if applicable) is out of stock
+    const isSelectionSoldOut = selectedSize !== null && getSizeStock(selectedSize) === 0;
 
     return (
         <div className="flex flex-col gap-y-8 sticky top-24">
@@ -233,17 +239,21 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
                             return (
                                 <button
                                     key={size}
-                                    disabled
+                                    onClick={() => {
+                                        setSelectedSize(size);
+                                        setQuantity(1);
+                                    }}
                                     aria-label={`${size} — Out of stock`}
-                                    title="Out of stock"
+                                    title="Out of stock — select to get notified when available"
                                     className={cn(
-                                        "flex h-12 px-4 items-center justify-center rounded-full text-sm font-medium",
-                                        "border border-dashed border-muted-foreground/30",
-                                        "bg-muted/20 text-muted-foreground/40",
-                                        "cursor-not-allowed select-none"
+                                        "flex h-12 px-4 items-center justify-center rounded-full text-sm font-medium transition-all",
+                                        "border border-dashed select-none",
+                                        isSelected
+                                            ? "border-foreground/50 bg-muted/40 text-muted-foreground"
+                                            : "border-muted-foreground/30 bg-muted/20 text-muted-foreground/40 hover:border-muted-foreground/50"
                                     )}
                                 >
-                                    <span className="line-through decoration-muted-foreground/30">
+                                    <span className="line-through decoration-muted-foreground/40">
                                         {size}
                                     </span>
                                 </button>
@@ -316,25 +326,48 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
 
                     {/* Action buttons */}
                     <div className="flex flex-col sm:flex-row flex-1 gap-2">
-                        <Button
-                            className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
-                            size="lg"
-                            variant="outline"
-                            onClick={handleAddToCart}
-                            disabled={isAdding || !canPurchase}
-                        >
-                            {isAdding ? "Adding..." : "ADD TO SELECTION"}
-                            {!isAdding && <ShoppingBag className="ml-2 h-4 w-4" />}
-                        </Button>
-                        <Button
-                            className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
-                            size="lg"
-                            onClick={handleBuyNow}
-                            disabled={!canPurchase}
-                        >
-                            Buy Now
-                            <CreditCard className="ml-2 h-4 w-4" />
-                        </Button>
+                        {isSelectionSoldOut ? (
+                            <>
+                                <Button
+                                    className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
+                                    size="lg"
+                                    variant="outline"
+                                    disabled
+                                >
+                                    Sold Out
+                                </Button>
+                                <Button
+                                    className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
+                                    size="lg"
+                                    onClick={() => setIsNotifyOpen(true)}
+                                >
+                                    Email Me When Available
+                                    <Mail className="ml-2 h-4 w-4" />
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
+                                    size="lg"
+                                    variant="outline"
+                                    onClick={handleAddToCart}
+                                    disabled={isAdding || !canPurchase}
+                                >
+                                    {isAdding ? "Adding..." : "ADD TO SELECTION"}
+                                    {!isAdding && <ShoppingBag className="ml-2 h-4 w-4" />}
+                                </Button>
+                                <Button
+                                    className="w-full sm:flex-1 uppercase tracking-widest h-12 rounded-full text-xs sm:text-sm"
+                                    size="lg"
+                                    onClick={handleBuyNow}
+                                    disabled={!canPurchase}
+                                >
+                                    Buy Now
+                                    <CreditCard className="ml-2 h-4 w-4" />
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -440,6 +473,16 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product, onColorChange }) => 
                 onClose={() => setIsSizeGuideOpen(false)}
                 colorVariants={product.colorVariants}
                 sizeGuideData={product.sizeGuideData}
+            />
+
+            <NotifyMeModal
+                isOpen={isNotifyOpen}
+                onClose={() => setIsNotifyOpen(false)}
+                productSlug={resolveSlug(product.slug)}
+                sizeOptions={activeSizes.filter(Boolean).map(s => s.size)}
+                colorVariants={hasColorVariants ? product.colorVariants : undefined}
+                initialSize={selectedSize}
+                initialColorHex={hasColorVariants ? selectedColor : null}
             />
         </div>
     );
